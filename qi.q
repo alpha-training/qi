@@ -5,7 +5,7 @@ tosym:{$[0=t:type x;.z.s each x;11=abs t;x;`$tostr x]}
 path:{$[0>type x;hsym tosym x;` sv @[raze tosym x;0;hsym]]}
 spath:1_string path@
 envpath:{[env;default;x]path($[count a:getenv env;a;default];$[any x~/:(::;`);();x])}
-home:envpath[`QIHOME;`qi]
+home:envpath[`QIHOME;`.]
 config:envpath[`QICONFIG;home`config]
 exists:not()~key@
 INCLUDED:0#`
@@ -16,7 +16,7 @@ guess:{$[(t:type x)in 0 98 99h;.z.s each x;10<>abs t;x;-10=t;$["*J"x in .Q.n]x;"
 opts:guess first each .Q.opt .z.x
 try:{[func;args;catch] $[`QI_ERR~first r:.[func;args;{(`QI_ERR;x)}];(0b;catch;r 1);(1b;r;"")]}
 try1:{try[x;enlist y;z]}
-promote:{@[`.;x;:;$["."=first tostr x;x;.qi x]];}
-promote each{$[exists x;`$read0 x;()]}config`promote.txt;
 
+\d .q
+{{$[(::)~r:$[b:"."=first s:.qi.tostr x;get x;.qi x];'"failed to promote: ",s;$[b;last` vs x;x]set r]}each $[.qi.exists x;`$read0 x;()]}.qi.config`promote.txt;
 \d .
