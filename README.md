@@ -5,31 +5,26 @@ qi is a kdb+ helper library.
 The file [qi.q](https://alphakdb.com/qi/repo/qi.q) is all that is needed:
 
     \l /path/to/qi.q      / load qi library
+    
+## Loading optional libraries
+The function `.qi.include` can be used to load qi's optional libraries, which are listed [here]().
 
-You can also create custom libraries:
+## Creating custom libraries
 
-    my_common.q
-    -----------
+You can also create a custom library:
+
+    // common.q
     \l /path/to/qi.q    / load qi
-    .qi.include`ipc     / load optional inter-process communication library
-    .qi.include"cron"   / load cron (timer) library (include also takes a string)
-    ...
+    .qi.include`ipc     / inter-process communication library
+    .qi.include"cron"   / timer library - include also takes a string
+    
+    // some custom code
 
-    some-file.q
-    -----------
-    \l /path/to/my_common.q    / load my-common instead of qi
-    ...
-   
-.qi.include first tries to load locally. If a library of that name is not found, it will be downloaded from the repository [alphakdb.com/qi/repo](https://alphakdb.com/qi/repo).
+And load it:
 
-qi will use as its working directory:
-
-1. `QIHOME`if that environment variable is defined. If not,
-2. it will write to a qi folder in the current working directory
+    \l /path/to/common.q    / load common instead of qi
 
 ## More information
-
-A glossary of qi's libraries and functions may be found [here](https://alphakdb.com/qi/docs).
 
 A tutorial on how to get a kdb+ stack up and running may be found [here](https://alphakdb.com/qi/videos/getting-started-1).
 
