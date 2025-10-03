@@ -17,7 +17,7 @@ include:{a:first` vs x;if[not a in REPO_LIBS;'"unrecognized library"];if[not a i
 now:{.z.p};today:{.z.d}
 guess:{$[(t:type x)in 0 98 99h;.z.s each x;10<>abs t;x;-10=t;$["*J"x in .Q.n]x;","in x;.z.s each","vs x;x~x inter .Q.n,".";$["JF""."in x]x;"S"$x]}
 opts:guess first each .Q.opt .z.x
-try:{[func;args;catch] $[`QI_ERR~first r:.[func;args;{(`QI_ERR;x)}];(0b;catch;r 1);(1b;r;"")]}
+try:{[func;args;catch] $[`ERR~first r:.[func;args;{(`ERR;x)}];(0b;catch;r 1);(1b;r;"")]}
 try1:{try[x;enlist y;z]}
 tcounts:{desc a!(count get@)each a:tables`} / descending table counts
 
