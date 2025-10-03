@@ -7,15 +7,14 @@ tosym:{$[0=t:type x;.z.s each x;11=abs t;x;`$tostr x]}
 path:{$[0>type x;hsym tosym x;` sv @[raze tosym x;0;hsym]]}
 spath:1_string path@
 envpath:{[env;default;x]path($[count a:getenv env;a;default];$[any x~/:(::;`);();x])}
-qilib:envpath[`QILIB;`:lib]
+qilib:{envpath[`QILIB;`:lib;dotq x]}
 qiconfig:envpath[`QICONFIG;`:config]
 exists:not()~key@
 INCLUDED:0#`
 dotq:{$[x like"*.q";x;-11=type x;` sv x,`q;x,".q"]}
 fetch:{[p;x] system"mkdir -p ",spath first ` vs p;system"wget -O ",spath[p]," ",REPO,"lib/",tostr dotq x}
-include:{a:first` vs x;if[not a in REPO_LIBS;'"unrecognized library"];if[not a in INCLUDED;if[not exists p:qilib` sv a,`q;fetch[p;a]];system"l ",spath p;INCLUDED,:a]}
+include:{a:first` vs x;if[not a in REPO_LIBS;'"unrecognized library"];if[not a in INCLUDED;if[not exists p:qilib a;fetch[p;a]];system"l ",spath p;INCLUDED,:a]}
 now:{.z.p};today:{.z.d}
-tcounts:{desc a!(count get@)each a:tables`} / descending table counts
 guess:{$[(t:type x)in 0 98 99h;.z.s each x;10<>abs t;x;-10=t;$["*J"x in .Q.n]x;","in x;.z.s each","vs x;x~x inter .Q.n,".";$["JF""."in x]x;"S"$x]}
 opts:guess first each .Q.opt .z.x
 try:{[func;args;catch] $[`ERR~first r:.[func;args;{(`ERR;x)}];(0b;catch;r 1);(1b;r;"")]}
