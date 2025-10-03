@@ -15,11 +15,11 @@ dotq:{$[x like"*.q";x;-11=type x;` sv x,`q;x,".q"]}
 fetch:{[p;x] system"mkdir -p ",spath first ` vs p;system"wget -O ",spath[p]," ",REPO,"lib/",tostr dotq x}
 include:{a:first` vs x;if[not a in REPO_LIBS;'"unrecognized library"];if[not a in INCLUDED;if[not exists p:qilib` sv a,`q;fetch[p;a]];system"l ",spath p;INCLUDED,:a]}
 now:{.z.p};today:{.z.d}
+tcounts:{desc a!(count get@)each a:tables`} / descending table counts
 guess:{$[(t:type x)in 0 98 99h;.z.s each x;10<>abs t;x;-10=t;$["*J"x in .Q.n]x;","in x;.z.s each","vs x;x~x inter .Q.n,".";$["JF""."in x]x;"S"$x]}
 opts:guess first each .Q.opt .z.x
 try:{[func;args;catch] $[`ERR~first r:.[func;args;{(`ERR;x)}];(0b;catch;r 1);(1b;r;"")]}
 try1:{try[x;enlist y;z]}
-tcounts:{desc a!(count get@)each a:tables`} / descending table counts
 
 \d .q
 {{$[b;last` vs x;x]set get$[b:"."=first s:.qi.tostr x;x;` sv`.qi,x]}each $[.qi.exists x;`$read0 x;()]}.qi.qiconfig`promote.txt;
