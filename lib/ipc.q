@@ -1,4 +1,4 @@
-include`event
+.qi.include`event
 
 \d .ipc
 
