@@ -1,5 +1,8 @@
 / Q Sharpe - Helper library for technical analysis
 
+-1"Loading QS";
+includecfg"qs/settings.csv"
+
 \d .qs
 
 SETTINGS_FILE:.qi.qiconfig`qs`settings.csv;
@@ -38,5 +41,7 @@ bollBands:{
   a:update sma:n mavg TP,k_dev:CFG[`BB.K]*n mdev TP by sym from a;
   update upperBB:sma+k_dev,lowerBB:sma-k_dev from a
   }
+
+loadSettings`;
 
 \d .

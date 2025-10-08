@@ -12,8 +12,11 @@ qiconfig:envpath[`QICONFIG;`:config]
 exists:not()~key@
 INCLUDED:0#`
 dotq:{$[x like"*.q";x;-11=type x;` sv x,`q;x,".q"]}
-fetch:{[p;x] system"mkdir -p ",spath first ` vs p;system"wget -O ",spath[p]," ",REPO,"lib/",tostr dotq x}
-include:{a:first` vs x;if[not a in REPO_LIBS;'"unrecognized library"];if[not a in INCLUDED;if[not exists p:qilib a;fetch[p;a]];system"l ",spath p;INCLUDED,:a]}
+fetch:{[dir;p;x] system"mkdir -p ",spath first ` vs p;system"wget -O ",spath[p]," ",REPO,dir,"/",tostr $[dir~"lib";dotq x;x]}
+fetchcfg:fetch"config"
+fetchlib:fetch"lib"
+include:{a:first` vs x;if[not a in REPO_LIBS;'"unrecognized library"];if[not a in INCLUDED;if[not exists p:qilib a;fetchlib[p;a]];system"l ",spath p;INCLUDED,:a]}
+includecfg:{if[not exists p:qiconfig x;fetchcfg[p;x]]}
 now:{.z.p};today:{.z.d}
 guess:{$[(t:type x)in 0 98 99h;.z.s each x;10<>abs t;x;-10=t;$["*J"x in .Q.n]x;","in x;.z.s each","vs x;x~x inter .Q.n,".";$["JF""."in x]x;"S"$x]}
 opts:guess first each .Q.opt .z.x
