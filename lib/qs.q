@@ -1,6 +1,5 @@
 / Q Sharpe - Helper library for technical analysis
 
--1"Loading QS";
 includecfg"qs/settings.csv"
 
 \d .qs
@@ -18,7 +17,8 @@ loadSettings:{
 loadCustomSettings:{[p]
   a:.j.k trim raze read0 .qi.path p;
   if[count new:key[a]except key CFG;'"unrecognized: ",sv[",";string new]," must be present in ",.qi.spath SETTINGS_FILE];
-  CFG,:$[count k:where 10=abs type each a;a,(k#CFG_TYPES)$k#a;a];
+  typ:@[key[a]#CFG_TYPES;where 10<>abs type each a;lower];
+  CFG,:typ$a;
  }
 
 /// Indicator Code ///
@@ -37,8 +37,9 @@ rsiMain:{[n;px]
 / Bollinger Bands
 bollBands:{
   n:CFG`BB.N;
+  k:CFG`BB.K;
   a:update TP:avg(high;low;close)by sym from x;
-  a:update sma:n mavg TP,k_dev:CFG[`BB.K]*n mdev TP by sym from a;
+  a:update sma:n mavg TP,k_dev:k*n mdev TP by sym from a;
   update upperBB:sma+k_dev,lowerBB:sma-k_dev from a
   }
 

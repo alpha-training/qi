@@ -2,3 +2,5 @@
 temp.*
 .env
 config/promote.txt
+example/config
+example/lib
