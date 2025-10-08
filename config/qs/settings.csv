@@ -1,0 +1,7 @@
+name,typ,default
+RSI.N,j,14
+BB.K,f,2
+BB.N,j,20
+RSI.ENTRY_MAX,j,30
+EOD,t,15:55
+MAX_LEV,f,2

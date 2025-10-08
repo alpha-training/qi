@@ -1,2 +1,4 @@
 .vscode
-temp*
+temp.*
+.env
+config/promote.txt
