@@ -4,21 +4,24 @@ includecfg"qs/settings.csv"
 
 \d .qs
 
+addCFG:{@[`.;`CFG;,;x]}
+CFG:{`..CFG x}
+
 SETTINGS_FILE:.qi.qiconfig`qs`settings.csv;
 
-/ global settings: .qs.CFG
+/ global settings
 loadSettings:{
   a:("SC*";enlist",")0:SETTINGS_FILE;
-  CFG,:(1#.q),exec name!upper[typ]$default from a;
-  CFG_TYPES,:exec name!upper typ from a;
+  addCFG(1#.q),exec name!upper[typ]$default from a;
+  @[`.;`CFG_TYPES;:;exec name!upper typ from a];
  }
 
 / Override .qs.CFG with specific settings
 loadCustomSettings:{[p]
   a:.j.k trim raze read0 .qi.path p;
-  if[count new:key[a]except key CFG;'"unrecognized: ",sv[",";string new]," must be present in ",.qi.spath SETTINGS_FILE];
-  typ:@[key[a]#CFG_TYPES;where 10<>abs type each a;lower];
-  CFG,:typ$a;
+  if[count new:key[a]except key`. `CFG;'"unrecognized: ",sv[",";string new]," must be present in ",.qi.spath SETTINGS_FILE];
+  typ:@[key[a]#`. `CFG_TYPES;where 10<>abs type each a;lower];
+  addCFG typ$a;
  }
 
 /// Indicator Code ///
@@ -37,9 +40,8 @@ rsiMain:{[n;px]
 / Bollinger Bands
 bollBands:{
   n:CFG`BB.N;
-  k:CFG`BB.K;
   a:update TP:avg(high;low;close)by sym from x;
-  a:update sma:n mavg TP,k_dev:k*n mdev TP by sym from a;
+  a:update sma:n mavg TP,k_dev:CFG[`BB.K]*n mdev TP by sym from a;
   update upperBB:sma+k_dev,lowerBB:sma-k_dev from a
   }
 
