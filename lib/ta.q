@@ -46,7 +46,7 @@ BBANDS:{
   update upperBB:sma+k_dev,lowerBB:sma-k_dev from a
   }
 
-tst.BBANDS2:{[pxCols;x]
+BBANDS2:{[pxCols;x]
   n:CFG`BB.N;
   byc:u.bycols x;
   a:$[1=count pxCols;[c:pxCols 0;x];[c:`TP;![x;();byc;enlist[`TP]!enlist(avg;(enlist),pxCols)]]];
