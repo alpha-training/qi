@@ -46,8 +46,10 @@ BBANDS:{
   update upperBB:sma+k_dev,lowerBB:sma-k_dev from a
   }
 
-BBANDS2:{[pxCols;x]
-  n:CFG`BB.N;
+/ Functional select equivalent
+/ BBANDS2[`close;20;bars]
+/ BBANDS2[`high`low`close;20;bars]
+BBANDS2:{[pxCols;n;x]
   byc:u.bycols x;
   a:$[1=count pxCols;[c:pxCols 0;x];[c:`TP;![x;();byc;enlist[`TP]!enlist(avg;(enlist),pxCols)]]];
   a:![a;();byc;`sma`k_dev!((mavg;n;c);(*;CFG`BB.K;(mdev;n;c)))];
