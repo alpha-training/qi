@@ -1,6 +1,6 @@
 / Technical analysis helper library
 
-includecfg"ta/settings.csv"
+.qi.includecfg"ta/settings.csv"
 
 \d .ta
 
