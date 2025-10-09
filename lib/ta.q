@@ -8,7 +8,7 @@ cfg.add:{@[`.;`CFG;,;x]}
 CFG:{`..CFG x}
 
 u.SETTINGS:.qi.qiconfig`ta`settings.csv;
-u.bycols:(`date`sym`tenor inter cols@)
+u.bycols:`date`sym`tenor inter cols@
 
 / global settings
 cfg.load:{
