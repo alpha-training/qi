@@ -8,7 +8,7 @@ cfg.add:{@[`.;`CFG;,;x]}
 CFG:{`..CFG x}
 
 u.SETTINGS:.qi.qiconfig`ta`settings.csv;
-u.bycols:`date`sym`tenor inter cols@
+u.bycols:{a!a:`date`sym`tenor inter cols x}
 
 / global settings
 cfg.load:{
@@ -39,17 +39,9 @@ RSI:{[px;n]
   }
 
 / Bollinger Bands
-BBANDS:{
-  n:CFG`BB.N;
-  a:update TP:avg(high;low;close)by sym from x;
-  a:update sma:n mavg TP,k_dev:CFG[`BB.K]*n mdev TP by sym from a;
-  update upperBB:sma+k_dev,lowerBB:sma-k_dev from a
-  }
+BBANDS:{BBANDSx[`high`low`close;CFG`BB.N;x]}
 
-/ Functional select equivalent
-/ BBANDS2[`close;20;bars]
-/ BBANDS2[`high`low`close;20;bars]
-BBANDS2:{[pxCols;n;x]
+BBANDSx:{[pxCols;n;x]
   byc:u.bycols x;
   a:$[1=count pxCols;[c:pxCols 0;x];[c:`TP;![x;();byc;enlist[`TP]!enlist(avg;(enlist),pxCols)]]];
   a:![a;();byc;`sma`k_dev!((mavg;n;c);(*;CFG`BB.K;(mdev;n;c)))];
@@ -59,3 +51,13 @@ BBANDS2:{[pxCols;n;x]
 cfg.load`;
 
 \d .
+
+/
+
+/ old definitions
+BBANDS:{
+  n:CFG`BB.N;
+  a:update TP:avg(high;low;close)by sym from x;
+  a:update sma:n mavg TP,k_dev:CFG[`BB.K]*n mdev TP by sym from a;
+  update upperBB:sma+k_dev,lowerBB:sma-k_dev from a
+  }
