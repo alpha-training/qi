@@ -8,6 +8,7 @@ cfg.add:{@[`.;`CFG;,;x]}
 CFG:{`..CFG x}
 
 u.SETTINGS:.qi.qiconfig`ta`settings.csv;
+u.bycols:(`date`sym`tenor inter cols@)
 
 / global settings
 cfg.load:{
@@ -47,7 +48,7 @@ BBANDS:{
 
 tst.BBANDS2:{[pxCols;x]
   n:CFG`BB.N;
-  byc:{a!a:1#x}`sym;
+  byc:u.bycols x;
   a:$[1=count pxCols;[c:pxCols 0;x];[c:`TP;![x;();byc;enlist[`TP]!enlist(avg;(enlist),pxCols)]]];
   a:![a;();byc;`sma`k_dev!((mavg;n;c);(*;CFG`BB.K;(mdev;n;c)))];
   update upperBB:sma+k_dev,lowerBB:sma-k_dev from a
