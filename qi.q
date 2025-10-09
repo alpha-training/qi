@@ -1,7 +1,7 @@
 \d .qi
 
 REPO:"https://raw.githubusercontent.com/alpha-training/qi/main/"
-REPO_LIBS:`cron`event`ipc`qs
+REPO_LIBS:`cron`event`ipc`ta
 tostr:{$[0=t:type x;.z.s each x;10=abs t;x;string x]}
 tosym:{$[0=t:type x;.z.s each x;11=abs t;x;`$tostr x]}
 path:{$[0>type x;hsym tosym x;` sv @[raze tosym x;0;hsym]]}
