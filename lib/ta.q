@@ -46,8 +46,8 @@ BBANDS:{
   }
 
 / Stochastic Fast
-STOCHF:{[tr;Tsym;n;m]
-    a:select from T where date within tr, sym in Tsym;
+STOCHF:{[table;tr;Tsym;n;m]
+    a:select from table where date within tr, sym in Tsym;
     Hn:mmax[n]timerange`high;
     Ln:mmin[n]timerange`low;
     K:100*((timerange`close)-Ln)%(Hn-Ln);
@@ -56,15 +56,15 @@ STOCHF:{[tr;Tsym;n;m]
   }
 
 /Stochastic Slow
-STOCH:{[tr;Tsym;n;m]
-    a: select from T where date within tr, sym in Tsym;
+STOCH:{[table;tr;Tsym;n;m]
+    a: select from table where date within tr, sym in Tsym;
     Hn: mmax[n] timerange`high;
     Ln: mmin[n] timerange`low;
     Kfast:100*((timerange`close)-Ln)%(Hn-Ln);
     Kslow:mavg[m;Kfast];
     Dslow:mavg[m;Kslow];
     update Kslow:Kslow,Dslow:Dslow a
-    } 
+  }
 
 cfg.load`;
 
