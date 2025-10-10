@@ -63,7 +63,7 @@ STOCH:{[table;tr;Tsym;n;m]
     Kfast:100*((ta`close)-Ln)%(Hn-Ln);
     Kslow:mavg[m;Kfast];
     Dslow:mavg[m;Kslow];
-    update Kslow:Kslow,Dslow:Dslow a
+    update Kslow:Kslow,Dslow:Dslow from a
   }
 
 cfg.load`;
