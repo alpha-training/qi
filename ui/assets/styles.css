@@ -1,0 +1,45 @@
+*{box-sizing:border-box}
+:root{
+  --border:#ddd; --text:#111; --muted:#666; --bg:#fff; --hover:#f6f6f6;
+}
+html,body{height:100%}
+body{margin:0;font:14px system-ui, -apple-system, Segoe UI, Roboto, sans-serif;color:var(--text);background:var(--bg)}
+
+.topbar{display:flex;align-items:center;padding:10px 12px;border-bottom:1px solid var(--border);position:sticky;top:0;background:#fff;z-index:10}
+.brand{font-weight:700}
+.spacer{flex:1}
+.lamp{width:10px;height:10px;border-radius:50%;border:1px solid var(--border)}
+.lamp.off{background:#bbb}
+.lamp.on{background:#2ecc71}
+.lamp.err{background:#e74c3c}
+
+.tabs{display:flex;border-bottom:1px solid var(--border);background:#fff;position:sticky;top:41px;z-index:9}
+.tab{padding:10px 14px;background:transparent;border:0;border-bottom:2px solid transparent;cursor:pointer}
+.tab:hover{background:var(--hover)}
+.tab.active{border-bottom-color:#111;font-weight:600}
+.badge{margin-left:6px;font-size:11px;border-radius:10px;padding:0 6px;border:1px solid #bbb;display:none}
+.badge.on{display:inline-block}
+
+.pane{display:none;padding:12px}
+.pane.show{display:block}
+
+.card{border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:12px;background:#fff}
+.grid{display:grid;grid-template-columns:1fr;gap:12px}
+@media (min-width: 980px){ .grid{grid-template-columns:1fr 1fr} }
+
+.table-wrap{overflow:auto}
+table{border-collapse:collapse;width:100%}
+th,td{border-bottom:1px solid var(--border);text-align:left;padding:8px}
+th{font-weight:600;background:#fafafa}
+
+.logbar{display:flex;gap:8px;margin-bottom:8px}
+.logarea{height:240px;overflow:auto;background:#0b0b0b;color:#d6d6d6;padding:8px;border-radius:8px;border:1px solid #222}
+
+.layout{display:flex;min-height:68vh}
+.panel{padding:12px}
+aside.panel{width:260px;border-right:1px solid var(--border)}
+.chart{height:520px}
+.meta{color:var(--muted);margin-top:6px;font-size:12px}
+
+#seriesBox label{display:flex;align-items:center;gap:6px;margin:4px 0}
+.toast{position:fixed;right:12px;bottom:12px;padding:8px 10px;border:1px solid var(--border);background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.08)}

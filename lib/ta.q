@@ -45,6 +45,26 @@ BBANDS:{
   update upperBB:sma+k_dev,lowerBB:sma-k_dev from a
   }
 
+/ Stochastic Fast
+STOCHF:{[tr;Tsym;n;m]
+    a:select from T where date within tr, sym in Tsym;
+    Hn:mmax[n]timerange`high;
+    Ln:mmin[n]timerange`low;
+    K:100*((timerange`close)-Ln)%(Hn-Ln);
+    D:mavg[m;K];
+    update Kfast:K, Dfast:D from a
+  }
+
+/Stochastic Slow
+STOCH:{[tr;Tsym;n;m]
+    a: select from T where date within tr, sym in Tsym;
+    Hn: mmax[n] timerange`high;
+    Ln: mmin[n] timerange`low;
+    Kfast:100*((timerange`close)-Ln)%(Hn-Ln);
+    Kslow:mavg[m;Kfast];
+    Dslow:mavg[m;Kslow];
+    update Kslow:Kslow,Dslow:Dslow a
+    } 
 
 cfg.load`;
 
