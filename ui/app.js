@@ -178,7 +178,8 @@ procBody.addEventListener('click', (e) => {
 // ====== Message Router ======
 ws.onmessage = (ev) => {
   const msg = JSON.parse(ev.data);
-
+    console.log("received msg");
+    console.log(msg.type);
   switch (msg.type) {
     case 'meta':
       toast(msg.msg || 'meta');

@@ -1,18 +1,22 @@
+\l qi.q
+
 / ===========================
 / Minimal static + WebSocket server for your UI
 / ===========================
 
 / --- CONFIG ---
 / If you launch q from the project root, this relative path is fine.
-.ui.root: `:ui;
+\d .ui
 
-/ Optionally set absolute path, e.g. .ui.root: `:/Users/you/project/ui
+ROOT: `:ui;
+
+/ Optionally set absolute path, e.g. .ui.ROOT: `:/Users/you/project/ui
 
 / --- STATE ---
 .ws.clients: ()                  / list of connected WS handles
 
 / --- MIME types ---
-.mime: (`html`htm`js`mjs`css`json`map`png`jpg`jpeg`gif`svg`ico`txt)!(enlist each
+.mime: (`html`htm`js`mjs`css`json`map`png`jpg`jpeg`gif`svg`ico`txt)!(
   ("text/html";"text/html";"application/javascript";"application/javascript";
    "text/css";"application/json";"application/json";
    "image/png";"image/jpeg";"image/jpeg";"image/gif";"image/svg+xml";"image/x-icon";"text/plain"))
@@ -29,23 +33,28 @@ fileBytes:{[p]
  }
 
 / Serve a single file with correct Content-Type
-serveFile:{[p]
-  b: fileBytes p;
-  if[b~(::); : "HTTP/1.1 404 Not Found\r\nContent-Length:0\r\n\r\n"];
-  ct: mimeFromPath p;
-  hdr: "HTTP/1.1 200 OK\r\nContent-Type: ",ct,"\r\nContent-Length: ",string count b,"\r\nCache-Control: no-store\r\n\r\n";
-  : hdr,b
+serveFile:{[path]
+  0N!(`serveFile;path);
+  if[`ERR~b:@[read1;p:.qi.path path;`ERR];
+    :"HTTP/1.1 404 Not Found\r\nContent-Length:0\r\n\r\n"];
+  if[not count ct:.mime last` vs last` vs p;
+   ct:"application/octet-stream"];
+  /    dbg;
+  header:"HTTP/1.1 200 OK\r\nContent-Type: ",ct,"\r\nContent-Length: ",string[count b],"\r\nCache-Control: no-store\r\n\r\n";
+  header,"c"$b
  }
 
 / --- HTTP router (GET/HEAD/…): .z.ph is called with the request path string ---
 / We keep it simple: serve / -> /ui/index.html; /ui/* -> from disk
-.z.ph:{[path]
- p:min[path?";?"]#path;
- if[any p~/:("";"/";"/ui");:serveFile .ui.root,"/index.html"];
- if[p like "/ui/*";
-   rel:4_p;
-   :serveFile .ui.root,$[rel~"";"/index.html"; rel]];
- "HTTP/1.1 404 Not Found\r\nContent-Length:0\r\n\r\n"
+.z.ph:{[x]
+ 0N!(`.z.ph;x 0);
+ p:min[path?";?"]#path:x 0;
+ if[any p~/:("";"/";"/ui");
+  -1"return 1";
+   show r:serveFile(ROOT;`index.html);
+   /`:tst.html 0: r;
+   :r];
+ serveFile p
  }
 
 / --- WebSocket lifecycle: .z.ws[h; m]
@@ -77,12 +86,15 @@ serveFile:{[p]
   ]
  }
 
-/ --- Broadcast utilities ---
-.ws.send:{[x] .h.w each .ws.clients,/: enlist x }
+.ws.handles:{h where"w"=(-38!h:.z.H)`p}
+.z.ws:{0N!`ws;show x;}
 
-wsMeta:{[s]    .ws.send .j.j enlist `type`msg!(`meta;s) }
-wsProcs:{[rows].ws.send .j.j enlist `type`rows!(`procs;rows) }   / rows: enlist of dicts (one per proc)
-wsLog:{[proc;line].ws.send .j.j enlist `type`proc`line!(`log;proc;line) }
+/ --- Broadcast utilities ---
+.ws.send:{neg[.ws.handles`]@\:x}
+
+wsMeta:{[s] .ws.send .j.j enlist `type`msg!(`meta;s) }
+wsProcs:{[rows] .ws.send .j.j enlist `type`rows!(`procs;rows) }   / rows: enlist of dicts (one per proc)
+wsLog:{[proc;line] .ws.send .j.j enlist `type`proc`line!(`log;proc;line) }
 
 / --- Plot API (what your UI consumes on Tab 2) ---
 / Expect a *plain table* t with a time column plus any series columns
