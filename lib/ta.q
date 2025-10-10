@@ -38,6 +38,22 @@ RSI:{[px;n]
   }
 
 / Bollinger Bands
+BBANDS:{BBANDSx[`high`low`close;CFG`BB.N;x]}
+
+BBANDSx:{[pxCols;n;x]
+  byc:u.bycols x;
+  a:$[1=count pxCols;[c:pxCols 0;x];[c:`TP;![x;();byc;enlist[`TP]!enlist(avg;(enlist),pxCols)]]];
+  a:![a;();byc;`sma`k_dev!((mavg;n;c);(*;CFG`BB.K;(mdev;n;c)))];
+  update upperBB:sma+k_dev,lowerBB:sma-k_dev from a
+ }
+
+cfg.load`;
+
+\d .
+
+/
+
+/ old definitions
 BBANDS:{
   n:CFG`BB.N;
   a:update TP:avg(high;low;close)by sym from x;
@@ -64,6 +80,18 @@ STOCH:{[table;tr;Tsym;n;m]
     Kslow:mavg[m;Kfast];
     Dslow:mavg[m;Kslow];
     update Kslow:Kslow,Dslow:Dslow from a
+  }
+
+// Moving Average Convergence Divergence - MACD
+MACD:{MACDx[`close;x;12;26;9]}
+
+MACDx:{[pxCol;x;fast;slow;sigPeriod]
+  a:x[pxCol];
+    emaFast:ema[2%fast+1;a];emaSlow:ema[2%slow+1;a];
+    macd:emaFast-emaSlow;
+    macdSignal:ema[2%(sigPeriod+1);macd];
+    macdHist:macd-macdSignal;
+    update macd,macdSignal,macdHist from x
   }
 
 cfg.load`;
