@@ -47,20 +47,20 @@ BBANDS:{
 
 / Stochastic Fast
 STOCHF:{[table;tr;Tsym;n;m]
-    a:select from table where date within tr, sym in Tsym;
-    Hn:mmax[n]timerange`high;
-    Ln:mmin[n]timerange`low;
-    K:100*((timerange`close)-Ln)%(Hn-Ln);
+    a:select from table where date within tr,sym in Tsym;
+    Hn:mmax[n]a`high;
+    Ln:mmin[n]a`low;
+    K:100*((a`close)-Ln)%(Hn-Ln);
     D:mavg[m;K];
-    update Kfast:K, Dfast:D from a
+    update Kfast:K,Dfast:D from a
   }
 
 /Stochastic Slow
 STOCH:{[table;tr;Tsym;n;m]
-    a: select from table where date within tr, sym in Tsym;
-    Hn: mmax[n] timerange`high;
-    Ln: mmin[n] timerange`low;
-    Kfast:100*((timerange`close)-Ln)%(Hn-Ln);
+    a:select from table where date within tr,sym in Tsym;
+    Hn:mmax[n] a`high;
+    Ln:mmin[n] a`low;
+    Kfast:100*((ta`close)-Ln)%(Hn-Ln);
     Kslow:mavg[m;Kfast];
     Dslow:mavg[m;Kslow];
     update Kslow:Kslow,Dslow:Dslow a
