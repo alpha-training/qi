@@ -82,7 +82,7 @@ STOCH:{[table;tr;Tsym;n;m]
     update Kslow:Kslow,Dslow:Dslow from a
   }
 
-// Moving Average Convergence Divergence - MACD
+/ Moving Average Convergence Divergence - MACD
 MACD:{MACDx[`close;x;12;26;9]}
 
 MACDx:{[pxCol;x;fast;slow;sigPeriod]
@@ -93,6 +93,8 @@ MACDx:{[pxCol;x;fast;slow;sigPeriod]
     macdHist:macd-macdSignal;
     update macd,macdSignal,macdHist from x
   }
+
+
 
 cfg.load`;
 
