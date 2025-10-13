@@ -82,7 +82,7 @@ STOCH:{[table;tr;Tsym;n;m]
     update Kslow:Kslow,Dslow:Dslow from a
   }
 
-/ Moving Average Convergence Divergence - MACD
+// Moving Average Convergence Divergence - MACD
 MACD:{MACDx[`close;x;12;26;9]}
 
 MACDx:{[pxCol;x;fast;slow;sigPeriod]
@@ -94,6 +94,25 @@ MACDx:{[pxCol;x;fast;slow;sigPeriod]
     update macd,macdSignal,macdHist from x
   }
 
+// KAMA (Kaufman’s Adaptive Moving Average)
+kama:{[T;tr;Tsym;n;fast;slow]
+  a:select from T where date within tr, sym in Tsym;
+  prices:a`close;
+  fastSC:2%fast+1;
+  slowSC:2%slow+1;
+
+  er:{[n;x] 
+    num:abs x-(prev/)[n;x];
+    den:msum[n;abs deltas x];
+    num%den
+    }[n;prices];
+
+  sc:((er*(fastSC-slowSC))+slowSC) xexp 2;
+  sc:(n#0),(n)_sc;
+
+  kama:{x+z*(y-x)}\[first prices;prices]sc;
+  update KAMA:kama from a
+  }
 
 
 cfg.load`;
