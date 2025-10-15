@@ -117,7 +117,24 @@ kama:{[T;tr;Tsym;n;fast;slow]
 mfiMain:{[h;l;c;n;v] 
     TP:avg(h;l;c);rmf:TP*v;diff:deltas[0n;TP];
     mf:u.relativeStrength[rmf*diff*diff>0;n]%u.relativeStrength[abs rmf*diff*diff<0;n];
-    mfi:100*mf%(1+mf);mfi}
+    mfi:100*mf%(1+mf);mfi
+    }
+
+
+
+midpoint:{[tr;Tsym;n]
+  a:select from T where date within tr,sym in Tsym;
+  maxv:mmax[n] a`close;   / rolling highest high
+  minv:mmin[n] a`close;   / rolling lowest low
+  update midpoint:(maxv+minv)%2 from a
+  }
+
+midprice:{[tr;Tsym;n]
+  a:select from T where date within tr,sym in Tsym;
+  maxv:mmax[n] a`high;
+  minv:mmin[n] a`low;
+  update midprice:(maxv+minv)%2 from a
+  }
 
 cfg.load`;
 
