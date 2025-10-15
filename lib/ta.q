@@ -115,6 +115,19 @@ kama:{[T;tr;Tsym;n;fast;slow]
   update KAMA:kama from a
   }
 
+midpoint:{[tr;Tsym;n]
+  a:select from T where date within tr,sym in Tsym;
+  maxv:mmax[n] a`close;   / rolling highest high
+  minv:mmin[n] a`close;   / rolling lowest low
+  update midpoint:(maxv+minv)%2 from a
+  }
+
+midprice:{[tr;Tsym;n]
+  a:select from T where date within tr,sym in Tsym;
+  maxv:mmax[n] a`high;
+  minv:mmin[n] a`low;
+  update midprice:(maxv+minv)%2 from a
+
 MFI:{[T;tr;Tsym;sigPeriod]
   a:select from T where date within tr, sym in Tsym;n:sigPeriod;
   tp:avg(a`high;a`low;a`close);
