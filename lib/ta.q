@@ -141,6 +141,22 @@ MFI:{[T;tr;Tsym;n]
   update mfi:100-(100%(1+mfRatio)) from a;
   }
 
+// AROON and AROONOSC (Aroon and Aroon Oscillator)
+AROON:{[T;tr;Tsym;n]
+    a:select from T where date within tr, sym in Tsym;
+    update aroonUp:AROONx[a`high;n;max],aroonDn:AROONx[a`low;n;min] from a
+    }
+
+AROONOSC:{[T;tr;Tsym;n]
+    a:select from T where date within tr, sym in Tsym;
+    update aroonOsc:AROONx[a`high;n;max] - AROONx[a`low;n;min] from a
+    }
+
+AROONx:{[c;n;f] 
+    m:reverse each a _'(n+1+a:til count[c]-n)#\:c;
+    arFunc:#[n;0ni],{x? y x}'[m;f];
+    100*reciprocal[n]*n-arFunc}
+
 cfg.load`;
 
 \d .
