@@ -37,11 +37,6 @@ RSI:{[px;n]
   100*rs%1+rs
   }
 
-mfiMain:{[h;l;c;n;v] 
-    TP:avg(h;l;c);rmf:TP*v;diff:deltas[0n;TP];
-    mf:u.relativeStrength[rmf*diff*diff>0;n]%u.relativeStrength[abs rmf*diff*diff<0;n];
-    mfi:100*mf%(1+mf);mfi}
-
 / Bollinger Bands
 BBANDS:{BBANDSx[`high`low`close;CFG`BB.N;x]}
 
@@ -119,6 +114,10 @@ kama:{[T;tr;Tsym;n;fast;slow]
   update KAMA:kama from a
   }
 
+mfiMain:{[h;l;c;n;v] 
+    TP:avg(h;l;c);rmf:TP*v;diff:deltas[0n;TP];
+    mf:u.relativeStrength[rmf*diff*diff>0;n]%u.relativeStrength[abs rmf*diff*diff<0;n];
+    mfi:100*mf%(1+mf);mfi}
 
 cfg.load`;
 
