@@ -1,6 +1,6 @@
 / Technical analysis helper library
 
-includecfg"ta/settings.csv"
+.qi.includecfg"ta/settings.csv"
 
 \d .ta
 
@@ -36,6 +36,11 @@ RSI:{[px;n]
   rs:u.relativeStrength[diff*diff>0;n]%u.relativeStrength[abs diff*diff<0;n];
   100*rs%1+rs
   }
+
+mfiMain:{[h;l;c;n;v] 
+    TP:avg(h;l;c);rmf:TP*v;diff:deltas[0n;TP];
+    mf:u.relativeStrength[rmf*diff*diff>0;n]%u.relativeStrength[abs rmf*diff*diff<0;n];
+    mfi:100*mf%(1+mf);mfi}
 
 / Bollinger Bands
 BBANDS:{BBANDSx[`high`low`close;CFG`BB.N;x]}
