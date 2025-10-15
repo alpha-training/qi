@@ -37,6 +37,7 @@ RSI:{[px;n]
   100*rs%1+rs
   }
 
+
 / Bollinger Bands
 BBANDS:{BBANDSx[`high`low`close;CFG`BB.N;x]}
 
@@ -46,7 +47,7 @@ BBANDSx:{[pxCols;n;x]
   a:![a;();byc;`sma`k_dev!((mavg;n;c);(*;CFG`BB.K;(mdev;n;c)))];
   update upperBB:sma+k_dev,lowerBB:sma-k_dev from a
  }
-
+\
 cfg.load`;
 
 \d .
@@ -114,26 +115,16 @@ kama:{[T;tr;Tsym;n;fast;slow]
   update KAMA:kama from a
   }
 
-mfiMain:{[h;l;c;n;v] 
-    TP:avg(h;l;c);rmf:TP*v;diff:deltas[0n;TP];
-    mf:u.relativeStrength[rmf*diff*diff>0;n]%u.relativeStrength[abs rmf*diff*diff<0;n];
-    mfi:100*mf%(1+mf);mfi
-    }
-
-
-
-midpoint:{[tr;Tsym;n]
-  a:select from T where date within tr,sym in Tsym;
-  maxv:mmax[n] a`close;   / rolling highest high
-  minv:mmin[n] a`close;   / rolling lowest low
-  update midpoint:(maxv+minv)%2 from a
-  }
-
-midprice:{[tr;Tsym;n]
-  a:select from T where date within tr,sym in Tsym;
-  maxv:mmax[n] a`high;
-  minv:mmin[n] a`low;
-  update midprice:(maxv+minv)%2 from a
+MFI:{[T;tr;Tsym;sigPeriod]
+  a:select from T where date within tr, sym in Tsym;n:sigPeriod;
+  tp:avg(a`high;a`low;a`close);
+  rmf:tp*a`volume;
+  posMF:rmf*tp>prev tp;negMF:rmf*tp<prev tp;
+  rollsum:{sum x[z+til y]};
+  sumPos:(n#0n),rollsum[posMF;n;] each 1+til count (n)_posMF;
+  sumNeg:(n#0n),rollsum[negMF;n;] each 1+til count (n)_negMF;
+  mfRatio:sumPos%sumNeg;
+  update mfi:100-(100%(1+mfRatio)) from a;
   }
 
 cfg.load`;
