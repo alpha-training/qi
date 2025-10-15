@@ -114,7 +114,7 @@ kama:{[T;tr;Tsym;n;fast;slow]
   kama:{x+z*(y-x)}\[first prices;prices]sc;
   update KAMA:kama from a
   }
-
+// MIDPOINT
 midpoint:{[tr;Tsym;n]
   a:select from T where date within tr,sym in Tsym;
   maxv:mmax[n] a`close;   / rolling highest high
@@ -122,11 +122,13 @@ midpoint:{[tr;Tsym;n]
   update midpoint:(maxv+minv)%2 from a
   }
 
+/ MIDPRICE
 midprice:{[tr;Tsym;n]
   a:select from T where date within tr,sym in Tsym;
   maxv:mmax[n] a`high;
   minv:mmin[n] a`low;
   update midprice:(maxv+minv)%2 from a
+  }
 
 // MFI (Money Flow Index)
 MFI:{[T;tr;Tsym;n]
@@ -155,7 +157,18 @@ AROONOSC:{[T;tr;Tsym;n]
 AROONx:{[c;n;f] 
     m:reverse each a _'(n+1+a:til count[c]-n)#\:c;
     arFunc:#[n;0ni],{x? y x}'[m;f];
-    100*reciprocal[n]*n-arFunc}
+    100*reciprocal[n]*n-arFunc
+    }
+
+// Triangular Moving Average
+TREMA:{[tr;Tsym;n]
+  a:select from T where date within tr, sym in Tsym;
+  ma1:mavg[ceiling n%2;a`close];
+  ma2:mavg[ceiling n%2;ma1];
+  update tma:ma2 from a
+  }
+
+
 
 cfg.load`;
 
