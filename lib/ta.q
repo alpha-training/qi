@@ -46,7 +46,8 @@ BBANDSx:{[pxCols;n;x]
   byc:u.bycols x;
   a:$[1=count pxCols;[c:pxCols 0;x];[c:`TP;![x;();byc;enlist[`TP]!enlist(avg;(enlist),pxCols)]]];
   a:![a;();byc;`sma`k_dev!((mavg;n;c);(*;CFG`BB.K;(mdev;n;c)))];
-  update upperBB:sma+k_dev,lowerBB:sma-k_dev from a
+  a:update upperBB:sma+k_dev,lowerBB:sma-k_dev from a;
+  $[INTER;a;`sma`k_dev _a]
  }
 
 / old definition
@@ -54,7 +55,8 @@ BBANDSold:{
   n:CFG`BB.N;
   a:update TP:avg(high;low;close)by sym from x;
   a:update sma:n mavg TP,k_dev:CFG[`BB.K]*n mdev TP by sym from a;
-  update upperBB:sma+k_dev,lowerBB:sma-k_dev from a
+  a:update upperBB:sma+k_dev,lowerBB:sma-k_dev from a;
+  $[INTER;a;`sma`k_dev _a]
   }
 
 / Stochastic Fast
@@ -188,5 +190,6 @@ ATR:{[T;tr;Tsym;n]
   }
 
 cfg.load`;
+INTER:CFG`SHOW_INTERMEDIARY
 
 \d .
