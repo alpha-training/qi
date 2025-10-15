@@ -180,6 +180,13 @@ TRANGE:{[T;tr;Tsym]
 TRANGEx:{[high;low;close]
   max(high-low;abs high-prev close;abs low-prev close)}
 
+ATR:{[T;tr;Tsym;n]
+  a:select from T where date within tr, sym in Tsym;
+  tr:TRANGEx[tt`high;tt`low;tt`close];start:avg tr[1+til n];
+  atr:(n#0n),start,{(y+x*(z-1))%z}\[start;(n+1)_tr;n];
+  update atr:atr from a
+  }
+
 cfg.load`;
 
 \d .
