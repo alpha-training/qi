@@ -8,6 +8,7 @@ cfg.add:{@[`.;`CFG;,;x]}
 CFG:{`..CFG x}
 
 u.SETTINGS:.qi.qiconfig`ta`settings.csv;
+u.bycols:{a!a:`date`sym`tenor inter cols x}
 
 / global settings
 cfg.load:{
@@ -48,14 +49,8 @@ BBANDSx:{[pxCols;n;x]
   update upperBB:sma+k_dev,lowerBB:sma-k_dev from a
  }
 
-cfg.load`;
-
-\d .
-
-/
-
-/ old definitions
-BBANDS:{
+/ old definition
+BBANDSold:{
   n:CFG`BB.N;
   a:update TP:avg(high;low;close)by sym from x;
   a:update sma:n mavg TP,k_dev:CFG[`BB.K]*n mdev TP by sym from a;
