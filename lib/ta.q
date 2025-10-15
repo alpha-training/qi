@@ -128,15 +128,16 @@ midprice:{[tr;Tsym;n]
   minv:mmin[n] a`low;
   update midprice:(maxv+minv)%2 from a
 
-MFI:{[T;tr;Tsym;sigPeriod]
-  a:select from T where date within tr, sym in Tsym;n:sigPeriod;
+// MFI (Money Flow Index)
+MFI:{[T;tr;Tsym;n]
+  a:select from T where date within tr, sym in Tsym;
   tp:avg(a`high;a`low;a`close);
   rmf:tp*a`volume;
   posMF:rmf*tp>prev tp;negMF:rmf*tp<prev tp;
   rollsum:{sum x[z+til y]};
   sumPos:(n#0n),rollsum[posMF;n;] each 1+til count (n)_posMF;
   sumNeg:(n#0n),rollsum[negMF;n;] each 1+til count (n)_negMF;
-  mfRatio:sumPos%sumNeg;
+  mfRatio:sumPos%sumNeg;s
   update mfi:100-(100%(1+mfRatio)) from a;
   }
 
