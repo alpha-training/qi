@@ -64,7 +64,12 @@ STOCHF:{[table;tr;Tsym;n;m]
     Ln:mmin[n]a`low;
     K:100*((a`close)-Ln)%(Hn-Ln);
     D:mavg[m;K];
-    update Kfast:K,Dfast:D from a
+    update kfast:K,dfast:D from a
+  }
+
+STOCHF2:{[x;n;m]
+    a:update kfast:100*{(x-z)%y-z}[close;n mmax high;n mmin low]by sym from x;
+    update dfast:m mavg kfast by sym from a
   }
 
 /Stochastic Slow
