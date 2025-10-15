@@ -47,7 +47,7 @@ BBANDSx:{[pxCols;n;x]
   a:![a;();byc;`sma`k_dev!((mavg;n;c);(*;CFG`BB.K;(mdev;n;c)))];
   update upperBB:sma+k_dev,lowerBB:sma-k_dev from a
  }
-\
+
 cfg.load`;
 
 \d .
@@ -169,6 +169,16 @@ TREMA:{[tr;Tsym;n]
   }
 
 
+
+// VOLATILITY INDICATORS - ATR (Average True Range), NATR (Normalized Average True Range), TRANGE (True Range)
+
+TRANGE:{[T;tr;Tsym]
+    a:select from T where date within tr, sym in Tsym;
+    update trueRange:TRANGEx[a`high;a`low;a`close] from a
+    }
+
+TRANGEx:{[high;low;close]
+  max(high-low;abs high-prev close;abs low-prev close)}
 
 cfg.load`;
 
