@@ -174,8 +174,9 @@ TREMA:{[tr;Tsym;n]
 
 
 
-// VOLATILITY INDICATORS - ATR (Average True Range), NATR (Normalized Average True Range), TRANGE (True Range) - Peter
+// VOLATILITY INDICATORS - Peter
 
+/ TRANGE (True Range)
 TRANGE:{[x;tr;s]
     a:select from x where date within tr, sym in s;
     update trueRange:TRANGEx[a`high;a`low;a`close] from a
@@ -184,6 +185,7 @@ TRANGE:{[x;tr;s]
 TRANGEx:{[high;low;close]
   max(high-low;abs high-prev close;abs low-prev close)}
 
+/ ATR (Average True Range)
 ATR:{[x;tr;s;n]
   a:select from x where date within tr, sym in s;
   tr:TRANGEx[a`high;a`low;a`close];start:avg tr[1+til n];
@@ -191,6 +193,7 @@ ATR:{[x;tr;s;n]
   update atr:atr from a
   }
 
+/ NATR (Normalized Average True Range)
 NATR:{[x;tr;s;n]
   a:select from x where date within tr, sym in s;
   tr:TRANGEx[a`high;a`low;a`close];start:avg tr[1+til n];
