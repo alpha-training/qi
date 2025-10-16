@@ -143,7 +143,7 @@ MFI:{[x;tr;s;n]
   rollsum:{sum x[z+til y]};
   sumPos:(n#0n),rollsum[posMF;n;] each 1+til count (n)_posMF;
   sumNeg:(n#0n),rollsum[negMF;n;] each 1+til count (n)_negMF;
-  mfRatio:sumPos%sumNeg;s
+  mfRatio:sumPos%sumNeg;
   update mfi:100-(100%(1+mfRatio)) from a;
   }
 
