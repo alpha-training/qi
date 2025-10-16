@@ -191,6 +191,14 @@ ATR:{[x;tr;s;n]
   update atr:atr from a
   }
 
+NATR:{[x;tr;s;n]
+  a:select from x where date within tr, sym in s;
+  tr:TRANGEx[a`high;a`low;a`close];start:avg tr[1+til n];
+  atr:(n#0n),start,{(y+x*(z-1))%z}\[start;(n+1)_tr;n];
+  natr:100*atr%a`close;
+  update natr:natr from a
+  }
+
 cfg.load`;
 INTER:CFG`SHOW_INTERMEDIARY
 
