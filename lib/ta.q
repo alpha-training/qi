@@ -206,6 +206,20 @@ NATR:{[x;tr;s;n]
 
 DEMA:{[px;n] (2*ema[2%n+1;px]) - ema[2%n+1;ema[2%n+1;px]]}
 
+// ADX (Average Directional Index) and related Momentum Indicators - Peter
+/ PLUS_DM, PLUS_DI, MINUS_DM, MINUS_DI, DX, ADX, ADXR
+
+PLUS_DM:{[x;tr;s;n]
+  a:select from x where date within tr, sym in s;
+  update plusDM:PLUS_DMx[a`high;a`low;n] from a
+  }
+
+PLUS_DMx:{[high;low;n]
+  dH:high-prev high;dL:(prev low)-low;
+  rawPlusDM:(dH>dL)&(dH>0)*dH;
+  init:sum rawPlusDM[til n];
+  smoothedPlusDM:((n-1)#0n),init,{(x-(x%z))+y}\[init;(n)_rawPlusDM;n]}
+
 cfg.load`;
 INTER:CFG`SHOW_INTERMEDIARY
 
