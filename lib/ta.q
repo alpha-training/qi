@@ -85,8 +85,10 @@ STOCH:{[table;tr;Tsym;n;m]
     update Kslow:Kslow,Dslow:Dslow from a
   }
 
-// Moving Average Convergence Divergence - MACD
-MACD:{MACDx[`close;x;12;26;9]}
+// Moving Average Convergence Divergence - MACD - Peter
+MACD:{MACDx[`close;x;CFG`MACD.FAST;CFG`MACD.SLOW;CFG`MACD.PERIOD]}
+
+MACDFIX:{MACDx[`close;x;12;26;CFG`MACD.PERIOD]}
 
 MACDx:{[pxCol;x;fast;slow;sigPeriod]
   a:x[pxCol];
@@ -132,9 +134,9 @@ midprice:{[tr;Tsym;n]
   update midprice:(maxv+minv)%2 from a
   }
 
-// MFI (Money Flow Index)
-MFI:{[T;tr;Tsym;n]
-  a:select from T where date within tr, sym in Tsym;
+// MFI (Money Flow Index) - Peter
+MFI:{[x;tr;s;n]
+  a:select from x where date within tr, sym in s;
   tp:avg(a`high;a`low;a`close);
   rmf:tp*a`volume;
   posMF:rmf*tp>prev tp;negMF:rmf*tp<prev tp;
@@ -145,14 +147,14 @@ MFI:{[T;tr;Tsym;n]
   update mfi:100-(100%(1+mfRatio)) from a;
   }
 
-// AROON and AROONOSC (Aroon and Aroon Oscillator)
-AROON:{[T;tr;Tsym;n]
-    a:select from T where date within tr, sym in Tsym;
+// AROON and AROONOSC (Aroon and Aroon Oscillator) - Peter
+AROON:{[x;tr;s;n]
+    a:select from x where date within tr, sym in s;
     update aroonUp:AROONx[a`high;n;max],aroonDn:AROONx[a`low;n;min] from a
     }
 
-AROONOSC:{[T;tr;Tsym;n]
-    a:select from T where date within tr, sym in Tsym;
+AROONOSC:{[x;tr;s;n]
+    a:select from x where date within tr, sym in s;
     update aroonOsc:AROONx[a`high;n;max] - AROONx[a`low;n;min] from a
     }
 
@@ -172,19 +174,19 @@ TREMA:{[tr;Tsym;n]
 
 
 
-// VOLATILITY INDICATORS - ATR (Average True Range), NATR (Normalized Average True Range), TRANGE (True Range)
+// VOLATILITY INDICATORS - ATR (Average True Range), NATR (Normalized Average True Range), TRANGE (True Range) - Peter
 
-TRANGE:{[T;tr;Tsym]
-    a:select from T where date within tr, sym in Tsym;
+TRANGE:{[x;tr;s]
+    a:select from x where date within tr, sym in s;
     update trueRange:TRANGEx[a`high;a`low;a`close] from a
     }
 
 TRANGEx:{[high;low;close]
   max(high-low;abs high-prev close;abs low-prev close)}
 
-ATR:{[T;tr;Tsym;n]
-  a:select from T where date within tr, sym in Tsym;
-  tr:TRANGEx[tt`high;tt`low;tt`close];start:avg tr[1+til n];
+ATR:{[x;tr;s;n]
+  a:select from x where date within tr, sym in s;
+  tr:TRANGEx[a`high;a`low;a`close];start:avg tr[1+til n];
   atr:(n#0n),start,{(y+x*(z-1))%z}\[start;(n+1)_tr;n];
   update atr:atr from a
   }
