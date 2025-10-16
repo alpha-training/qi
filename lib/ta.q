@@ -202,6 +202,10 @@ NATR:{[x;tr;s;n]
   update natr:natr from a
   }
 
+// DEMA (Double Exponential Moving Average) - Peter
+
+DEMA:{[px;n] (2*ema[2%n+1;px]) - ema[2%n+1;ema[2%n+1;px]]}
+
 cfg.load`;
 INTER:CFG`SHOW_INTERMEDIARY
 
