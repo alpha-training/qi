@@ -274,6 +274,16 @@ ADXx:{[high;low;close;n]
   adx:wilderAvgSmooth[(n)_dx;n];
   adx:(n#0n),adx}
 
+ADXR:{[x;tr;s;n]
+  a:select from x where date within tr, sym in s;
+  update adxr:ADXRx[a`high;a`low;a`close;n] from a
+  }
+
+ADXRx:{[high;low;close;n]
+  adx:ADXx[high;low;close;n];
+  shifted:(neg[n-1])_((n-1)#0n),adx;
+  adxr:(shifted+adx)%2}
+
 wilderSmooth:{[x;n]
   init:sum x[til n];
   smoothed:((n-1)#0n),init,{(x-(x%z))+y}\[init;(n)_x;n]}
