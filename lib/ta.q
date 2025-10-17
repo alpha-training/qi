@@ -220,6 +220,17 @@ PLUS_DMx:{[high;low;n]
   init:sum rawPlusDM[til n];
   smoothedPlusDM:((n-1)#0n),init,{(x-(x%z))+y}\[init;(n)_rawPlusDM;n]}
 
+MINUS_DM:{[x;tr;s;n]
+  a:select from x where date within tr, sym in s;
+  update minusDM:MINUS_DMx[a`high;a`low;n] from a
+  }
+
+MINUS_DMx:{[high;low;n]
+  dH:high-prev high;dL:(prev low)-low;
+  rawMinusDM:(dL>dH)&(dL>0)*dL;
+  init:sum rawMinusDM[til n];
+  smoothedMinusDM:((n-1)#0n),init,{(x-(x%z))+y}\[init;(n)_rawMinusDM;n]}
+
 cfg.load`;
 INTER:CFG`SHOW_INTERMEDIARY
 
