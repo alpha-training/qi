@@ -292,6 +292,16 @@ wilderAvgSmooth:{[x;n]
   init:avg x[til n];
   smoothed:((n-1)#0n),init,{((x*(z-1))+y)%z}\[init;(n)_x;n]}
 
+// MOM (Momentum) - Peter
+MOM:{[x;tr;s;n]
+  a:select from x where date within tr, sym in s;
+  update mom:MOMx[a`close;n] from a
+  }
+
+MOMx:{[px;n]
+  mom:(n#0n),(neg n)_((n rotate px)-px)
+  }
+  
 cfg.load`;
 INTER:CFG`SHOW_INTERMEDIARY
 
