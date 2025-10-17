@@ -60,30 +60,17 @@ BBANDSold:{
   }
 
 / Stochastic Fast
-STOCHF:{[table;tr;Tsym;n;m]
-    a:select from table where date within tr,sym in Tsym;
-    Hn:mmax[n]a`high;
-    Ln:mmin[n]a`low;
-    K:100*((a`close)-Ln)%(Hn-Ln);
-    D:mavg[m;K];
-    update kfast:K,dfast:D from a
-  }
-
-STOCHF2:{[x;n;m]
+STOCHF:{[x;n;m]
     a:update kfast:100*{(x-z)%y-z}[close;n mmax high;n mmin low]by sym from x;
     update dfast:m mavg kfast by sym from a
   }
 
 /Stochastic Slow
-STOCH:{[table;tr;Tsym;n;m]
-    a:select from table where date within tr,sym in Tsym;
-    Hn:mmax[n] a`high;
-    Ln:mmin[n] a`low;
-    Kfast:100*((ta`close)-Ln)%(Hn-Ln);
-    Kslow:mavg[m;Kfast];
-    Dslow:mavg[m;Kslow];
-    update Kslow:Kslow,Dslow:Dslow from a
-  }
+STOCH:{[x;n;m]
+    a:update kfast:100*{(x-z)%y-z}[close;n mmax high;n mmin low] by sym from x;
+    a:update kslow:m mavg kfast by sym from a;
+    update dslow:m mavg kslow by sym from a
+    }
 
 // Moving Average Convergence Divergence - MACD - Peter
 MACD:{MACDx[`close;x;CFG`MACD.FAST;CFG`MACD.SLOW;CFG`MACD.PERIOD]}
