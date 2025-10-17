@@ -179,7 +179,7 @@ TREMA:{[tr;Tsym;n]
 / TRANGE (True Range)
 TRANGE:{[x;tr;s]
     a:select from x where date within tr, sym in s;
-    update trueRange:TRANGEx[a`high;a`low;a`close] from a
+    update trueRange:.ta.TRANGEx[a`high;a`low;a`close] from a
     }
 
 TRANGEx:{[high;low;close]
