@@ -217,8 +217,7 @@ PLUS_DM:{[x;tr;s;n]
 PLUS_DMx:{[high;low;n]
   dH:high-prev high;dL:(prev low)-low;
   rawPlusDM:(dH>dL)&(dH>0)*dH;
-  init:sum rawPlusDM[til n];
-  smoothedPlusDM:((n-1)#0n),init,{(x-(x%z))+y}\[init;(n)_rawPlusDM;n]}
+  smoothedPlusDM:wilderSmooth[rawPlusDM;n]}
 
 MINUS_DM:{[x;tr;s;n]
   a:select from x where date within tr, sym in s;
@@ -228,8 +227,60 @@ MINUS_DM:{[x;tr;s;n]
 MINUS_DMx:{[high;low;n]
   dH:high-prev high;dL:(prev low)-low;
   rawMinusDM:(dL>dH)&(dL>0)*dL;
-  init:sum rawMinusDM[til n];
-  smoothedMinusDM:((n-1)#0n),init,{(x-(x%z))+y}\[init;(n)_rawMinusDM;n]}
+  smoothedMinusDM:wilderSmooth[rawMinusDM;n]}
+
+PLUS_DI:{[x;tr;s;n]
+  a:select from x where date within tr, sym in s;
+  update plusDI:PLUS_DIx[a`high;a`low;a`close;n] from a
+  }
+
+PLUS_DIx:{[high;low;close;n]
+  plusDM:PLUS_DMx[high;low;n];
+  tRange:.ta.TRANGEx[high;low;close];
+  smoothTR:wilderSmooth[tRange;n];
+  smthPlusDM:100*plusDM%smoothTR;
+  smthPlusDM[n-1]:0n;smthPlusDM}
+
+MINUS_DI:{[x;tr;s;n]
+  a:select from x where date within tr, sym in s;
+  update minusDI:MINUS_DIx[a`high;a`low;a`close;n] from a
+  }
+
+MINUS_DIx:{[high;low;close;n]
+  plusDM:MINUS_DMx[high;low;n];
+  tRange:.ta.TRANGEx[high;low;close];
+  smoothTR:wilderSmooth[tRange;n];
+  smthMinusDM:100*plusDM%smoothTR;
+  smthMinusDM[n-1]:0n;smthMinusDM}
+
+DX:{[x;tr;s;n]
+  a:select from x where date within tr, sym in s;
+  update dx:DXx[a`high;a`low;a`close;n] from a
+  }
+
+DXx:{[high;low;close;n]
+  plusDI:PLUS_DIx[high;low;close;n];
+  minusDI:MINUS_DIx[high;low;close;n];
+  dx:100*abs(plusDI-minusDI)%(plusDI+minusDI);
+  dx[n-1]:0n;dx}
+
+ADX:{[x;tr;s;n]
+  a:select from x where date within tr, sym in s;
+  update adx:ADXx[a`high;a`low;a`close;n] from a
+  }
+
+ADXx:{[high;low;close;n]
+  dx:DXx[high;low;close;n];
+  adx:wilderAvgSmooth[(n)_dx;n];
+  adx:(n#0n),adx}
+
+wilderSmooth:{[x;n]
+  init:sum x[til n];
+  smoothed:((n-1)#0n),init,{(x-(x%z))+y}\[init;(n)_x;n]}
+
+wilderAvgSmooth:{[x;n]
+  init:avg x[til n];
+  smoothed:((n-1)#0n),init,{((x*(z-1))+y)%z}\[init;(n)_x;n]}
 
 cfg.load`;
 INTER:CFG`SHOW_INTERMEDIARY
