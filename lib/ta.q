@@ -94,7 +94,7 @@ MACDx:{[pxCol;x;fast;slow;sigPeriod]
     update macd,macdSignal,macdHist from x
   }
 
-KAMA:{[x; n; fast; slow]
+KAMA:{[x;n;fast;slow]
   prices: x`close;
 
   /Compute Efficiency Ratio (ER)
