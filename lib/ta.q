@@ -118,13 +118,13 @@ KAMA:{[x;n;fast;slow]
   update KAMA:kama from x
   }
 
-// MIDPOINT
-midpoint:{[tr;Tsym;n]
-  a:select from T where date within tr,sym in Tsym;
-  maxv:mmax[n] a`close;   / rolling highest high
-  minv:mmin[n] a`close;   / rolling lowest low
-  update midpoint:(maxv+minv)%2 from a
+// MIDPOINT - Ian
+midpoint:{[x;n] /n is lookback period
+  maxv:mmax[n]x`close;
+  minv:mmin[n]x`close;
+  update midpoint:(maxv+minv)%2 from x
   }
+
 
 / MIDPRICE
 midprice:{[tr;Tsym;n]
