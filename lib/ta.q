@@ -204,8 +204,7 @@ PLUS_DM:{[x;tr;s;n]
 PLUS_DMx:{[high;low;n]
   dH:high-prev high;dL:(prev low)-low;
   rawPlusDM:(dH>dL)&(dH>0)*dH;
-  init:sum rawPlusDM[til n];
-  smoothedPlusDM:((n-1)#0n),init,{(x-(x%z))+y}\[init;(n)_rawPlusDM;n]}
+  smoothedPlusDM:wilderSmooth[rawPlusDM;n]}
 
 MINUS_DM:{[x;tr;s;n]
   a:select from x where date within tr, sym in s;
@@ -215,8 +214,121 @@ MINUS_DM:{[x;tr;s;n]
 MINUS_DMx:{[high;low;n]
   dH:high-prev high;dL:(prev low)-low;
   rawMinusDM:(dL>dH)&(dL>0)*dL;
-  init:sum rawMinusDM[til n];
-  smoothedMinusDM:((n-1)#0n),init,{(x-(x%z))+y}\[init;(n)_rawMinusDM;n]}
+  smoothedMinusDM:wilderSmooth[rawMinusDM;n]}
+
+PLUS_DI:{[x;tr;s;n]
+  a:select from x where date within tr, sym in s;
+  update plusDI:PLUS_DIx[a`high;a`low;a`close;n] from a
+  }
+
+PLUS_DIx:{[high;low;close;n]
+  plusDM:PLUS_DMx[high;low;n];
+  tRange:.ta.TRANGEx[high;low;close];
+  smoothTR:wilderSmooth[tRange;n];
+  smthPlusDM:100*plusDM%smoothTR;
+  smthPlusDM[n-1]:0n;smthPlusDM}
+
+MINUS_DI:{[x;tr;s;n]
+  a:select from x where date within tr, sym in s;
+  update minusDI:MINUS_DIx[a`high;a`low;a`close;n] from a
+  }
+
+MINUS_DIx:{[high;low;close;n]
+  plusDM:MINUS_DMx[high;low;n];
+  tRange:.ta.TRANGEx[high;low;close];
+  smoothTR:wilderSmooth[tRange;n];
+  smthMinusDM:100*plusDM%smoothTR;
+  smthMinusDM[n-1]:0n;smthMinusDM}
+
+DX:{[x;tr;s;n]
+  a:select from x where date within tr, sym in s;
+  update dx:DXx[a`high;a`low;a`close;n] from a
+  }
+
+DXx:{[high;low;close;n]
+  plusDI:PLUS_DIx[high;low;close;n];
+  minusDI:MINUS_DIx[high;low;close;n];
+  dx:100*abs(plusDI-minusDI)%(plusDI+minusDI);
+  dx[n-1]:0n;dx}
+
+ADX:{[x;tr;s;n]
+  a:select from x where date within tr, sym in s;
+  update adx:ADXx[a`high;a`low;a`close;n] from a
+  }
+
+ADXx:{[high;low;close;n]
+  dx:DXx[high;low;close;n];
+  adx:wilderAvgSmooth[(n)_dx;n];
+  adx:(n#0n),adx}
+
+ADXR:{[x;tr;s;n]
+  a:select from x where date within tr, sym in s;
+  update adxr:ADXRx[a`high;a`low;a`close;n] from a
+  }
+
+ADXRx:{[high;low;close;n]
+  adx:ADXx[high;low;close;n];
+  shifted:(neg[n-1])_((n-1)#0n),adx;
+  adxr:(shifted+adx)%2}
+
+wilderSmooth:{[x;n]
+  init:sum x[til n];
+  smoothed:((n-1)#0n),init,{(x-(x%z))+y}\[init;(n)_x;n]}
+
+wilderAvgSmooth:{[x;n]
+  init:avg x[til n];
+  smoothed:((n-1)#0n),init,{((x*(z-1))+y)%z}\[init;(n)_x;n]}
+
+// MOM (Momentum) - Peter
+MOM:{[x;tr;s;n]
+  a:select from x where date within tr, sym in s;
+  update mom:MOMx[a`close;n] from a
+  }
+
+MOMx:{[px;n]
+  mom:(n#0n),(neg n)_((n rotate px)-px)
+  }
+
+//ROC (Rate of Change) and related Momentum Indicators - Peter
+/ ROC, ROCP, ROCR, ROCR100
+
+ROC:{[x;tr;s;n]
+  a:select from x where date within tr, sym in s;
+  update roc:ROCx[a`close;n] from a
+  }
+
+ROCx:{[px;n]
+  roc:ROCPx[px;n]*100
+  }
+
+ROCP:{[x;tr;s;n]
+  a:select from x where date within tr, sym in s;
+  update roc:ROCPx[a`close;n] from a
+  }
+
+ROCPx:{[px;n]
+  mom:.ta.MOMx[px;n];
+  rocp:(n#0n),((n)_mom%px)
+  }
+
+ROCR:{[x;tr;s;n]
+  a:select from x where date within tr, sym in s;
+  update roc:ROCRx[a`close;n] from a
+  }
+
+ROCRx:{[px;n]
+  mom:.ta.MOMx[px;n];
+  rocr:(n#0n),(((n)_mom%px)+1)
+  }
+
+ROCR100:{[x;tr;s;n]
+  a:select from x where date within tr, sym in s;
+  update roc:ROCR100x[a`close;n] from a
+  }
+
+ROCR100x:{[px;n]
+  rocr100:ROCRx[px;n]*100
+  }
 
 cfg.load`;
 INTER:CFG`SHOW_INTERMEDIARY
