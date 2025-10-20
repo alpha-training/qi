@@ -301,7 +301,47 @@ MOM:{[x;tr;s;n]
 MOMx:{[px;n]
   mom:(n#0n),(neg n)_((n rotate px)-px)
   }
-  
+
+//ROC (Rate of Change) - Peter
+
+ROC:{[x;tr;s;n]
+  a:select from x where date within tr, sym in s;
+  update roc:ROCx[a`close;n] from a
+  }
+
+ROCx:{[px;n]
+  roc:ROCPx[px;n]*100
+  }
+
+ROCP:{[x;tr;s;n]
+  a:select from x where date within tr, sym in s;
+  update roc:ROCPx[a`close;n] from a
+  }
+
+ROCPx:{[px;n]
+  mom:.ta.MOMx[px;n];
+  rocp:(n#0n),((n)_mom%px)
+  }
+
+ROCR:{[x;tr;s;n]
+  a:select from x where date within tr, sym in s;
+  update roc:ROCRx[a`close;n] from a
+  }
+
+ROCRx:{[px;n]
+  mom:.ta.MOMx[px;n];
+  rocr:(n#0n),(((n)_mom%px)+1)
+  }
+
+ROCR100:{[x;tr;s;n]
+  a:select from x where date within tr, sym in s;
+  update roc:ROCR100x[a`close;n] from a
+  }
+
+ROCR100x:{[px;n]
+  rocr100:ROCRx[px;n]*100
+  }
+
 cfg.load`;
 INTER:CFG`SHOW_INTERMEDIARY
 
