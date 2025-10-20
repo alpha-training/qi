@@ -125,13 +125,11 @@ midpoint:{[x;n] /n is lookback period
   update midpoint:(maxv+minv)%2 from x
   }
 
-
-/ MIDPRICE
-midprice:{[tr;Tsym;n]
-  a:select from T where date within tr,sym in Tsym;
-  maxv:mmax[n] a`high;
-  minv:mmin[n] a`low;
-  update midprice:(maxv+minv)%2 from a
+/ MIDPRICE - Ian
+midprice:{[x;n]
+  maxv:mmax[n]x`high;
+  minv:mmin[n]x`low;
+  update midprice:(maxv+minv)%2 from x
   }
 
 // MFI (Money Flow Index) - Peter
