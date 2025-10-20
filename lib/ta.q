@@ -59,6 +59,15 @@ BBANDSold:{
   $[INTER;a;`sma`k_dev _a]
   }
 
+
+/TA-LIb matching EMA
+TAEMA:{[n;data]
+  alpha:2.0%(n+1);
+  {[alpha;x;y](alpha*y)+(1-alpha)*x}[alpha]\[first data;data]
+  }
+
+
+
 / Stochastic Fast
 STOCHF:{[x;n;m]
     a:update kfast:100*{(x-z)%y-z}[close;n mmax high;n mmin low]by sym from x;
@@ -329,6 +338,30 @@ ROCR100:{[x;tr;s;n]
 ROCR100x:{[px;n]
   rocr100:ROCRx[px;n]*100
   }
+
+/ VOLUME INDICATORS -Ian
+
+/ AD 
+AD:{[x]
+  a:update mfm:((close - low)-(high - close))%high - low by sym from x;
+  a:update mfv:mfm*volume by sym from a;
+  update ad:sums mfv by sym from a
+  }
+
+/ AD-OSC 
+ADOSC:{[x;fast;slow]
+  a:AD x;
+  update adosc:(taema[fast;a`ad] - taema[slow;a`ad]) by sym from a
+  }
+
+/ OBV 
+OBV:{[x]
+  a:update dir:signum deltas close by sym from x;
+  a:update volAdj:dir*volume by sym from a;
+  update obv:sums volAdj by sym from a
+  }
+
+
 
 cfg.load`;
 INTER:CFG`SHOW_INTERMEDIARY
