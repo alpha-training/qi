@@ -163,11 +163,10 @@ AROONx:{[c;n;f]
     }
 
 // Triangular Moving Average
-TREMA:{[tr;Tsym;n]
-  a:select from T where date within tr, sym in Tsym;
-  ma1:mavg[ceiling n%2;a`close];
+TREMA:{[x;n]
+  ma1:mavg[ceiling n%2;x`close];
   ma2:mavg[ceiling n%2;ma1];
-  update tma:ma2 from a
+  update tma:ma2 from x
   }
 
 
