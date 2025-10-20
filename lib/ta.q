@@ -169,6 +169,14 @@ TREMA:{[x;n]
   update tma:ma2 from x
   }
 
+/ Triangular exponential moving average
+TEMA:{[x;n]
+  ema1:TAEMA[n;x`close];
+  ema2:TAEMA[n;ema1];
+  ema3:TAEMA[n;ema2];
+  tema:ema3+(3*ema1)-3*ema2;
+  update tema:tema from x
+  }
 
 
 // VOLATILITY INDICATORS - Peter
@@ -276,7 +284,7 @@ ROCR100:{[px;n]
   rocr100:ROCR[px;n]*100
   }
 
-/ VOLUME INDICATORS -Ian
+/ VOLUME INDICATORS - Ian
 
 / AD 
 AD:{[x]
