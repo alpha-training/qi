@@ -67,7 +67,6 @@ TAEMA:{[n;data]
   }
 
 
-
 / Stochastic Fast
 STOCHF:{[x;n;m]
     a:update kfast:100*{(x-z)%y-z}[close;n mmax high;n mmin low]by sym from x;
@@ -95,25 +94,30 @@ MACDx:{[pxCol;x;fast;slow;sigPeriod]
     update macd,macdSignal,macdHist from x
   }
 
-// KAMA (Kaufman’s Adaptive Moving Average)
-kama:{[T;tr;Tsym;n;fast;slow]
-  a:select from T where date within tr, sym in Tsym;
-  prices:a`close;
-  fastSC:2%fast+1;
-  slowSC:2%slow+1;
+KAMA:{[x; n; fast; slow]
+  prices: x`close;
 
+  /Compute Efficiency Ratio (ER)
   er:{[n;x] 
     num:abs x-(prev/)[n;x];
     den:msum[n;abs deltas x];
     num%den
     }[n;prices];
 
+  /Compute smoothing constant (SC)
+  fastSC:2%fast+1;
+  slowSC:2%slow+1;
   sc:((er*(fastSC-slowSC))+slowSC) xexp 2;
+
+  / pad first n SCs with 0 to align
   sc:(n#0),(n)_sc;
 
+  /Compute KAMA recursively
   kama:{x+z*(y-x)}\[first prices;prices]sc;
-  update KAMA:kama from a
+  /Add KAMA as a new column
+  update KAMA:kama from x
   }
+
 // MIDPOINT
 midpoint:{[tr;Tsym;n]
   a:select from T where date within tr,sym in Tsym;
