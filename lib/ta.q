@@ -302,7 +302,8 @@ MOMx:{[px;n]
   mom:(n#0n),(neg n)_((n rotate px)-px)
   }
 
-//ROC (Rate of Change) - Peter
+//ROC (Rate of Change) and related Momentum Indicators - Peter
+/ ROC, ROCP, ROCR, ROCR100
 
 ROC:{[x;tr;s;n]
   a:select from x where date within tr, sym in s;
