@@ -198,15 +198,15 @@ TRANGE:{[high;low;close]
 
 / ATR (Average True Range)
 ATR:{[x;tr;s;n]
-  a:select from x where date within tr by sym in s;
+  a:select from x where date within tr,sym in s;
   tr:TRANGE[a`high;a`low;a`close];start:avg tr[1+til n];
   atr:(n#0n),start,{(y+x*(z-1))%z}\[start;(n+1)_tr;n];
-  update atr:atr from a
+  update atr:atr from a by sym;
   }
 
 / NATR (Normalized Average True Range)
 NATR:{[x;tr;s;n]
-  a:select from x where date within tr by sym in s;
+  a:select from x where date within tr,sym in s;
   tr:TRANGE[a`high;a`low;a`close];start:avg tr[1+til n];
   atr:(n#0n),start,{(y+x*(z-1))%z}\[start;(n+1)_tr;n];
   natr:100*atr%a`close;
@@ -221,12 +221,12 @@ DEMA:{[px;n] (2*ema[2%n+1;px]) - ema[2%n+1;ema[2%n+1;px]]}
 / PLUS_DM, PLUS_DI, MINUS_DM, MINUS_DI, DX, ADX, ADXR
 
 PLUS_DM:{[high;low;n]
-  dH:high-prev high;dL:(prev low)-low;
+  dH:high-prev high;dL:prev [low]-low;
   rawPlusDM:(dH>dL)&(dH>0)*dH;
   smoothedPlusDM:wilderSmooth[rawPlusDM;n]}
 
 MINUS_DM:{[high;low;n]
-  dH:high-prev high;dL:(prev low)-low;
+  dH:high-prev high;dL:prev[low]-low;
   rawMinusDM:(dL>dH)&(dL>0)*dL;
   smoothedMinusDM:wilderSmooth[rawMinusDM;n]}
 
