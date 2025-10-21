@@ -350,6 +350,17 @@ APO:{[x;fast;slow]
 BOP:{[x]
   a:update bop:((x`close)-x`open)%((x`high)-x`low) by sym from x}
 
+// CCI (Commodity Channel Index) - Peter
+
+CCI:{[x;n]
+  high:x`high;low:x`low;close:x`close;
+  tp:avg(high;low;close);
+  sma:n mavg tp;
+  getMD:{[tp;sma;n;x] avg abs tp[x+til n]-sma[x+n-1]};
+  md:((n-1)#0n),getMD[tp;sma;n;] each (til (count tp)-(n-1));
+  a:update cci:(tp-sma)%(0.015*md) by sym from a
+  }
+
 cfg.load`;
 INTER:CFG`SHOW_INTERMEDIARY
 
