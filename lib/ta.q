@@ -177,15 +177,17 @@ TRIMA:{[x;n]
     };
   update trima:calcTRIMA[close;n] by sym from x
   }
+
 / Triangular exponential moving average
 TEMA:{[x;n]
-  ema1:TAEMA[n;x`close];
+  calcTema:{[close;n]
+  ema1:TAEMA[n;close];
   ema2:TAEMA[n;ema1];
   ema3:TAEMA[n;ema2];
-  tema:ema3+(3*ema1)-3*ema2;
-  update tema:tema by sym from x
+  ema3+(3*ema1)-3*ema2
+  };
+  update tema:calcTema[close;n] by sym from x
   }
-
 
 // VOLATILITY INDICATORS - Peter
 
