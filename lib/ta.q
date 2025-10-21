@@ -232,7 +232,7 @@ MINUS_DM:{[high;low;n]
 
 PLUS_DI:{[high;low;close;n]
   plusDM:PLUS_DM[high;low;n];
-  tRange:.ta.TRANGE[high;low;close];
+  tRange:TRANGE[high;low;close];
   smoothTR:wilderSmooth[tRange;n];
   smthPlusDM:100*plusDM%smoothTR;
   smthPlusDM[n-1]:0n;smthPlusDM}
