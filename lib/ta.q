@@ -298,7 +298,7 @@ ROCR100:{[px;n]
 
 / AD 
 AD:{[x]
-  a:update mfm:((close - low)-(high - close))%high - low by sym from x;
+  a:update mfm:((close-low)-(high-close))%high-low by sym from x;
   a:update mfv:mfm*volume by sym from a;
   update ad:sums mfv by sym from a
   }
