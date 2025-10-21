@@ -238,10 +238,10 @@ PLUS_DI:{[high;low;close;n]
   smthPlusDM[n-1]:0n;smthPlusDM}
 
 MINUS_DI:{[high;low;close;n]
-  plusDM:MINUS_DM[high;low;n];
-  tRange:.ta.TRANGE[high;low;close];
+  minusDM:MINUS_DM[high;low;n];
+  tRange:TRANGE[high;low;close];
   smoothTR:wilderSmooth[tRange;n];
-  smthMinusDM:100*plusDM%smoothTR;
+  smthMinusDM:100*minusDM%smoothTR;
   smthMinusDM[n-1]:0n;smthMinusDM}
 
 DX:{[high;low;close;n]
