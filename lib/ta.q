@@ -305,7 +305,7 @@ AD:{[x]
 
 / AD-OSC 
 ADOSC:{[x;fast;slow]
-  update adosc:(taema[fast;a`ad] - taema[slow;a`ad]) by sym from AD x
+  update adosc:(TAEMA[fast;a`ad]-TAEMA[slow;a`ad]) by sym from AD x
   }
 
 / OBV 
