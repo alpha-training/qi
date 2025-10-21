@@ -321,6 +321,9 @@ AVGPRICE:{[x]
   update avgprice:(open+high+low+close)*0.25 by sym from x
   }
   
+MEDPRICE:{[x]
+  update medprice:(high+low)%2 by sym from x
+  }
 
 // PPO (Percentage Price Oscillator) - Peter
 
