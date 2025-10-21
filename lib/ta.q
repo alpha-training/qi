@@ -94,43 +94,50 @@ MACDx:{[pxCol;x;fast;slow;sigPeriod]
     update macd,macdSignal,macdHist from x
   }
 
+
+/ KAMA
 KAMA:{[x;n;fast;slow]
-  prices: x`close;
-
-  /Compute Efficiency Ratio (ER)
-  er:{[n;x] 
-    num:abs x-(prev/)[n;x];
-    den:msum[n;abs deltas x];
-    num%den
-    }[n;prices];
-
-  /Compute smoothing constant (SC)
-  fastSC:2%fast+1;
-  slowSC:2%slow+1;
-  sc:((er*(fastSC-slowSC))+slowSC) xexp 2;
-
-  / pad first n SCs with 0 to align
-  sc:(n#0),(n)_sc;
-
-  /Compute KAMA recursively
-  kama:{x+z*(y-x)}\[first prices;prices]sc;
-  /Add KAMA as a new column
-  update KAMA:kama from x
-  }
+  / Compute KAMA for a single series of prices
+  calcKAMA:{[prices;n;fast;slow]
+    / Compute Efficiency Ratio (ER)
+    er:{[n;x]
+      num:abs x-(prev/)[n;x];
+      den:msum[n;abs deltas x];
+      num%den
+      }[n;prices];
+    / Compute smoothing constant (SC)
+    fastSC:2%fast+1;
+    slowSC:2%slow+1;
+    sc:((er*(fastSC-slowSC))+slowSC) xexp 2;
+    / Pad first n SCs with 0 to align
+    sc:(n#0),(n)_sc;
+    / Compute KAMA recursively
+    kama:{x+z*(y-x)}\[first prices;prices]sc;
+    kama
+  };
+  / Apply calcKAMA to each sym group
+  update kama:calcKAMA[close;n;fast;slow] by sym from x
+ }
 
 // MIDPOINT - Ian
-midpoint:{[x;n] /n is lookback period
-  maxv:mmax[n]x`close;
-  minv:mmin[n]x`close;
-  update midpoint:(maxv+minv)%2 from x
-  }
+midpoint:{[x;n]
+  calcMidpoint:{[close;n]
+    maxv:n mmax close;  / Moving max of close over n periods
+    minv:n mmin close;  / Moving min of close over n periods
+    (maxv+minv)%2        / Midpoint = (max close + min close)/2
+  };
+  update midpoint:calcMidpoint[close;n] by sym from x
+ }
 
 / MIDPRICE - Ian
 midprice:{[x;n]
-  maxv:mmax[n]x`high;
-  minv:mmin[n]x`low;
-  update midprice:(maxv+minv)%2 from x
-  }
+  calcMidprice:{[high;low;n]
+    maxv:n mmax high;  / Moving max of high over n periods
+    minv:n mmin low;   / Moving min of low over n periods
+    (maxv+minv)%2       / Midprice = (max high + min low)/2
+  };
+  update midprice:calcMidprice[high;low;n] by sym from x
+ }
 
 // MFI (Money Flow Index) - Peter
 MFI:{[x;tr;s;n]
@@ -162,20 +169,21 @@ AROONx:{[c;n;f]
     100*reciprocal[n]*n-arFunc
     }
 
-// Triangular Moving Average
-TREMA:{[x;n]
-  ma1:mavg[ceiling n%2;x`close];
-  ma2:mavg[ceiling n%2;ma1];
-  update tma:ma2 from x
+ // Triangular Moving Average
+TRIMA:{[x;n]
+  calcTRIMA:{[close;n]
+    ma1:mavg[ceiling n%2;close];
+    mavg[ceiling n%2;ma1]
+    };
+  update trima:calcTRIMA[close;n] by sym from x
   }
-
 / Triangular exponential moving average
 TEMA:{[x;n]
   ema1:TAEMA[n;x`close];
   ema2:TAEMA[n;ema1];
   ema3:TAEMA[n;ema2];
   tema:ema3+(3*ema1)-3*ema2;
-  update tema:tema from x
+  update tema:tema by sym from x
   }
 
 
@@ -305,6 +313,12 @@ OBV:{[x]
   a:update volAdj:dir*volume by sym from a;
   update obv:sums volAdj by sym from a
   }
+
+/ AVG PRICE
+AVGPRICE:{[x]
+  update avgprice:(open+high+low+close)*0.25 by sym from x
+  }
+  
 
 
 
