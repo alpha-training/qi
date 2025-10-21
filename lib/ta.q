@@ -235,7 +235,7 @@ PLUS_DI:{[high;low;close;n]
   tRange:TRANGE[high;low;close];
   smoothTR:wilderSmooth[tRange;n];
   smthPlusDM:100*plusDM%smoothTR;
-  smthPlusDM[n-1]:0n;smthPlusDM}
+  @[smthPlusDM;n-1;:;0n]}
 
 MINUS_DI:{[high;low;close;n]
   minusDM:MINUS_DM[high;low;n];
@@ -252,12 +252,12 @@ DX:{[high;low;close;n]
 
 ADXx:{[high;low;close;n]
   dx:DX[high;low;close;n];
-  adx:wilderAvgSmooth[(n)_dx;n];
+  adx:wilderAvgSmooth[n _dx;n];
   adx:(n#0n),adx}
 
 ADXR:{[high;low;close;n]
   adx:ADX[high;low;close;n];
-  shifted:(neg[n-1])_((n-1)#0n),adx;
+  shifted:neg[n-1]_#[n-1;0n],adx;
   adxr:(shifted+adx)%2}
 
 wilderSmooth:{[x;n]
@@ -270,7 +270,7 @@ wilderAvgSmooth:{[x;n]
 
 // MOM (Momentum) - Peter
 MOM:{[px;n]
-  mom:(n#0n),(neg n)_((n rotate px)-px)
+  mom:(n#0n),neg n _((n rotate px)-px)
   }
 
 //ROC (Rate of Change) and related Momentum Indicators - Peter
@@ -357,7 +357,7 @@ CCI:{[x;n]
   sma:n mavg tp;
   getMD:{[tp;sma;n;x] avg abs tp[x+til n]-sma[x+n-1]};
   md:((n-1)#0n),getMD[tp;sma;n;] each (til (count tp)-(n-1));
-  a:update cci:(tp-sma)%(0.015*md) by sym from a
+  update cci:(tp-sma)%(0.015*md) by sym from a
   }
 
 cfg.load`;
