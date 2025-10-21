@@ -325,6 +325,10 @@ MEDPRICE:{[x]
   update medprice:(high+low)%2 by sym from x
   }
 
+TYPPRICE:{[x]
+  update typprice:(high+low+close)%3 by sym from x
+  }
+
 // PPO (Percentage Price Oscillator) - Peter
 
 PPO:{[x;fast;slow]
