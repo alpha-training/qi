@@ -364,6 +364,12 @@ CCI:{[x;n]
   update cci:(tp-sma)%(0.015*md) by sym from x
   }
 
+// WILLR (Williams' %R) - Peter
+
+WILLR:{[x;n]
+  update willR:((n-1)#0n),(n-1) _-100*{(y-x)%y-z}[close;n mmax high;n mmin low] by sym from x;
+  }
+
 cfg.load`;
 INTER:CFG`SHOW_INTERMEDIARY
 
