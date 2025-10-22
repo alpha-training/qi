@@ -86,12 +86,12 @@ MACD:{MACDx[`close;x;CFG`MACD.FAST;CFG`MACD.SLOW;CFG`MACD.PERIOD]}
 MACDFIX:{MACDx[`close;x;12;26;CFG`MACD.PERIOD]}
 
 MACDx:{[pxCol;x;fast;slow;sigPeriod]
-  a:x[pxCol];
-    emaFast:ema[2%fast+1;a];emaSlow:ema[2%slow+1;a];
-    macd:emaFast-emaSlow;
-    macdSignal:ema[2%(sigPeriod+1);macd];
-    macdHist:macd-macdSignal;
-    update macd,macdSignal,macdHist from x
+    a:update emaFast:ema[2%fast+1;x[pxCol]] by sym from x;
+    a:update emaSlow:ema[2%slow+1;x[pxCol]]by sym from a;
+    a:update macd:emaFast-emaSlow by sym from a;
+    a:update macdSignal:ema[2%(sigPeriod+1);macd] by sym from a;
+    a:update macdHist:macd-macdSignal by sym from a;
+    a:delete emaFast,emaSlow from a
   }
 
 
@@ -140,27 +140,25 @@ midprice:{[x;n]
  }
 
 // MFI (Money Flow Index) - Peter
-MFI:{[x;tr;s;n]
-  a:select from x where date within tr, sym in s;
-  tp:avg(a`high;a`low;a`close);
+MFI:{[x;n]
+  calcMFI:{[a;n] tp:avg(a`high;a`low;a`close);
   rmf:tp*a`volume;
   posMF:rmf*tp>prev tp;negMF:rmf*tp<prev tp;
   rollsum:{sum x[z+til y]};
   sumPos:(n#0n),rollsum[posMF;n;] each 1+til count (n)_posMF;
   sumNeg:(n#0n),rollsum[negMF;n;] each 1+til count (n)_negMF;
   mfRatio:sumPos%sumNeg;
-  update mfi:100-(100%(1+mfRatio)) from a;
+  mfi:100-(100%(1+mfRatio))};
+  update mfi:calcMFI[x;n] by sym from x
   }
 
 // AROON and AROONOSC (Aroon and Aroon Oscillator) - Peter
-AROON:{[x;tr;s;n]
-    a:select from x where date within tr, sym in s;
-    update aroonUp:AROONx[a`high;n;max],aroonDn:AROONx[a`low;n;min] from a
+AROON:{[x;n]
+    update aroonUp:.ta.AROONx[x`high;n;max],aroonDn:.ta.AROONx[x`low;n;min] by sym from x
     }
 
-AROONOSC:{[x;tr;s;n]
-    a:select from x where date within tr, sym in s;
-    update aroonOsc:AROONx[a`high;n;max] - AROONx[a`low;n;min] from a
+AROONOSC:{[x;n]
+    update aroonOsc:.ta.AROONx[x`high;n;max] - .ta.AROONx[x`low;n;min] by sym from x
     }
 
 AROONx:{[c;n;f] 
