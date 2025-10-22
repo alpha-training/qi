@@ -361,7 +361,7 @@ CCI:{[x;n]
   sma:n mavg tp;
   getMD:{[tp;sma;n;x] avg abs tp[x+til n]-sma[x+n-1]};
   md:((n-1)#0n),getMD[tp;sma;n;] each (til (count tp)-(n-1));
-  update cci:(tp-sma)%(0.015*md) by sym from a
+  update cci:(tp-sma)%(0.015*md) by sym from x
   }
 
 cfg.load`;
