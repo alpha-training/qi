@@ -315,17 +315,21 @@ OBV:{[x]
   update obv:sums volAdj by sym from a
   }
 
-/ AVG PRICE
+/ AVG PRICES
 AVGPRICE:{[x]
   update avgprice:(open+high+low+close)%4 by sym from x
   }
-  
+/ Median Price
 MEDPRICE:{[x]
   update medprice:(high+low)%2 by sym from x
   }
-
+/ Typical Price
 TYPPRICE:{[x]
   update typprice:(high+low+close)%3 by sym from x
+  }
+/ Weighted average
+WCLPRICE:{[x]
+  update wclprice:(high+low+2*close)%4 by sym from x
   }
 
 // PPO (Percentage Price Oscillator) - Peter
