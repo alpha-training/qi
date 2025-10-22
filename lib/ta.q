@@ -317,7 +317,7 @@ OBV:{[x]
 
 / AVG PRICE
 AVGPRICE:{[x]
-  update avgprice:(open+high+low+close)*0.25 by sym from x
+  update avgprice:(open+high+low+close)%4 by sym from x
   }
   
 MEDPRICE:{[x]
@@ -334,7 +334,7 @@ PPO:{[x;fast;slow]
   a:update emaFast:ema[2%fast+1;x`close] by sym from x;
   a:update emaSlow:ema[2%slow+1;x`close] by sym from a;
   a:update ppo:100*(emaFast-emaSlow)%emaSlow by sym from a;
-  delete emaFast,emaSlow from a}
+  delete emaFast,emaSlow from a }
 
 // APO (Absolute Price Oscillator) - Peter
 
