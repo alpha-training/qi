@@ -357,7 +357,7 @@ PPO:{[x;fast;slow]
 APO:{[x;fast;slow]
   a:update emaFast:ema[2%fast+1;x`close] by sym from x;
   a:update emaSlow:ema[2%slow+1;x`close] by sym from a;
-  a:update apo:emaFast-emaSlow by sym from a;
+  a:update apo:((fast#0n),fast _(emaFast-emaSlow)) by sym from a;
   delete emaFast,emaSlow from a}
 
 // BOP (Balance of Power) - Peter
