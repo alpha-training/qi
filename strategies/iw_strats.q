@@ -5,7 +5,7 @@
 
 \l /data/alf/polygon/hdb/us_stocks_sip
 
-tt:select from bar1m where date within (2022.03.02 2022.03.02),sym in `TSLA`AAPL
+tt:select from bar1m where date within (2022.03.02 2022.03.10),sym in `TSLA`AAPL
 
 simplestrat_buydip:{[x]
     a:update rsi:.ta.RSI[x`close;CFG`RSI.N] by sym from x;
