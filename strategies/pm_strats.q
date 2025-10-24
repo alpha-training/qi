@@ -38,4 +38,3 @@ dDemac:{[x]
     a:update enterLong:((atr*(CFG`DDEMAC.ATR_PERCENT)%100)<apo)&(adx>CFG`DDEMAC.ADX_MIN) from a;
     a:update exitLong:(apo<=0) from a;
     $[.ta.INTER;a;`demaFast`demaSlow`apo`adx`atr _a]}
-
