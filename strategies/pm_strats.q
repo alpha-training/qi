@@ -22,7 +22,7 @@ demac:{[x]
     fast:CFG`DEMAC.FAST;slow:CFG`DEMAC.SLOW;
     a:.ta.APO[x;fast;slow];
     a:.ta.ADX[a;fast];a:.ta.ATR[a;fast];
-    a:update enterLong:((atr*CFG`DEMAC.ATR_PERCENT%100)<apo)&(adx>CFG`DEMAC.ADX_MIN) from a;
+    a:update enterLong:((atr*(CFG`DEMAC.ATR_PERCENT)%100)<apo)&(adx>CFG`DEMAC.ADX_MIN) from a;
     a:update exitLong:(apo<=0) from a;
     $[.ta.INTER;a;`apo`adx`atr _a]}
 
@@ -35,7 +35,7 @@ dDemac:{[x]
     a:update demaSlow:.ta.DEMA[a`close;slow] by sym from a;
     a:update apo:((fast#0n),fast _(demaFast-demaSlow)) by sym from a;
     a:.ta.ADX[a;fast];a:.ta.ATR[a;fast];
-    a:update enterLong:((atr*CFG`DEMAC.ATR_PERCENT%100)<apo)&(adx>CFG`DDEMAC.ADX_MIN) from a;
+    a:update enterLong:((atr*(CFG`DDEMAC.ATR_PERCENT)%100)<apo)&(adx>CFG`DDEMAC.ADX_MIN) from a;
     a:update exitLong:(apo<=0) from a;
     $[.ta.INTER;a;`demaFast`demaSlow`apo`adx`atr _a]}
 
