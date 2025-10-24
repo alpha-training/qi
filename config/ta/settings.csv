@@ -1,9 +1,10 @@
 name,typ,default
 SHOW_INTERMEDIARY,b,0
-RSI.N,j,14
-BB.K,f,2
+RSI.N,j,5
+BB.K,f,1
 BB.N,j,20
 RSI.ENTRY_MAX,j,30
+RSI.EXIT_MAX,j,60
 EOD,t,15:55
 MAX_LEV,f,2
 MACD.FAST,j,12
