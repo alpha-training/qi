@@ -61,7 +61,7 @@ orb:{[x]
         orClose:last openRange`close;
         orOpen:first openRange`open;
         orHigh:max openRange`high;
-        $[orClose>orOpen;a:update enterLong:close>orHigh from a;:x];
+        $[orClose>orOpen;a:update enterLong:close>orHigh from x;:x];
         entryPrice:(first select from a where prev enterLong)`open;
         a:.ta.ATR[a;CFG`ORB.ATR_PERIOD];
         a:update exitLong:(close<(entryPrice - CFG`ORB.ATR_STOP*atr))or time>CFG`EOD from a};
