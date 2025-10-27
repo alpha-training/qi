@@ -46,10 +46,10 @@ wirMer:{[x]
     a:.ta.MACD[a];
     a:update macdMavg:mavg[CFG`WIRMER.MAVG;macd] by sym from a;
     a:update macdMdev:mdev[CFG`WIRMER.MDEV;macd] by sym from a;
-    a:update macdOB:macd>(macdMavg+1.5*macdMdev) by sym from a;
-    a:update macdOS:macd<(macdMavg - 1.5*macdMdev) by sym from a;
+    a:update macdOB:macd>(macdMavg+macdMdev*CFG`WIRMER.DEVMULT) by sym from a;
+    a:update macdOS:macd<(macdMavg-macdMdev*CFG`WIRMER.DEVMULT) by sym from a;
     a:update enterLong:(willR<CFG`WIRMER.OVERSOLD_THRESH)&macdOS&(macd>macdSignal) by sym from a;
-    a:update exitLong:(willR>(CFG`WIRMER.OVERBOUGHT_THRESH))&macdOB&(macd<macdSignal) by sym from a;
+    a:update exitLong:(willR>CFG`WIRMER.OVERBOUGHT_THRESH)&macdOB&(macd<macdSignal) by sym from a;
     $[.ta.INTER;a;`willR`macd`macdSignal`macdHist`macdMavg`macdMdev`macdOB`macdOS _a]}
 
 // ORB (Opening Range Breakout)
