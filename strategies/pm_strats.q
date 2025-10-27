@@ -42,6 +42,8 @@ dDemac:{[x]
 // wirMer (Williams %R Mean Reversion)
 
 wirMer:{[x]
+    a:.ta.WILLR[x;CFG`WILLR];
+    a:.ta.MACD[a];
     }
 
 // ORB (Opening Range Breakout)

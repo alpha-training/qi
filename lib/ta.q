@@ -380,7 +380,7 @@ CCI:{[x;n]
 // WILLR (Williams' %R) - Peter
 
 WILLR:{[x;n]
-  update willR:((n-1)#0n),(n-1) _-100*{(y-x)%y-z}[close;n mmax high;n mmin low] by sym from x;
+  update willR:((n-1)#0n),(n-1) _-100*{(y-x)%y-z}[close;n mmax high;n mmin low] by sym from x
   }
 
 cfg.load`;
