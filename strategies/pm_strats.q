@@ -2,6 +2,7 @@
 .qi.include`ta
 \l /data/alf/polygon/hdb/us_stocks_sip
 tt:select from bar1m where date=max date,sym=`A
+tt2:select from bar1m where date=max date,sym=`AAPL
 .ta.INTER:0
 
 // RAC (RSI/ADX COMBO)
@@ -56,14 +57,17 @@ wirMer:{[x]
 / Based on https://www.quantconnect.com/research/18444/opening-range-breakout-for-stocks-in-play/p1
 
 orb:{[x]
-    orbLogic:{[x]
-        openRange:CFG`ORB.ORMINS#x;
+    enterLogic:{[x]
+        openRange:(CFG`ORB.ORMINS)#x;
         orClose:last openRange`close;
         orOpen:first openRange`open;
         orHigh:max openRange`high;
-        $[orClose>orOpen;a:update enterLong:close>orHigh from x;:x];
-        entryPrice:(first select from a where prev enterLong)`open;
-        a:.ta.ATR[a;CFG`ORB.ATR_PERIOD];
-        a:update exitLong:(close<(entryPrice - CFG`ORB.ATR_STOP*atr))or time>CFG`EOD from a};
-    orbLogic[x] by sym from x
+        $[orClose>orOpen;orHigh<x`close;(count x)#0b]};
+    exitLogic:{[x]
+        entryPrice:(first select from x where prev enterLong)`open;
+        x:.ta.ATR[x;CFG`ORB.ATR_PERIOD];
+        x:update exitLong:(close<(entryPrice - atr*CFG`ORB.ATR_STOP))or time>CFG`EOD from x;
+        x`exitLong};
+    a:update enterLong:enterLogic[x] by sym from x;
+    a:update exitLong:exitLogic[a] by sym from a
     }
