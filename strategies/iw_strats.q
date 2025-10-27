@@ -38,25 +38,23 @@ simplestrat_volumeSpike:{[x]
     update exit_long:1b by sym from a where time in (value select max time by date from a)`time;
     $[.ta.INTER;a;`rsi`upperBB`lowerBB`volma`swing_high`vwap`TP _a]
     }
-/
 
-
-/ Simple mean reverting strat
 
 RSITrendReversion:{[x]
-  / Compute short-term and long-term RSI
-  a:update rsi5:.ta.RSI[close;CFG`RSI.LONG_SHORT],rsi14:.ta.RSI[close;CFG`RSI.LONG_BASE] by sym from x;
-  a:update sma50:mavg[CFG`TREND.SMA;close] by sym from a;
+    / Step 1: compute short & long RSI
+    a:update rsi5:.ta.RSI[x`close;CFG`RSI.LONG_SHORT],
+    rsi14:.ta.RSI[x`close;CFG`RSI.LONG_BASE] by sym from x;
 
-  / Entry condition:
-  / rsi5 < rsi14  (short-term weaker than long-term)
-  / close > sma50 (uptrend confirmation)
-  a:update enter_long:(rsi5 < rsi14) & (close > sma50) by sym from a;
-
-  / Exit condition:
-  / rsi5 > CFG`RSI.EXIT
-  / Or trend breakdown: close < sma50
-  a:update exit_long:(rsi5 > CFG`RSI.EXIT) | (close < sma50) by sym from a;
-
-  a
-}
+    / Step 2: compute trend filter
+    a:update sma50:50 mavg close by sym from a;
+    / Step 3: entry condition
+    / short-term RSI weaker than long-term, in uptrend
+    a:update enter_long:(rsi5<rsi14)&(close>sma50) by sym from a;
+    / Step 4: exit condition
+    / momentum reversal OR trend break
+    a:update exit_long:(rsi5>CFG`RSI.EXIT_MAX)|(close<sma50) by sym from a;
+    / Step 5: force exit at end of session
+    a:update exit_long:1b by sym from a where time in (value select max time by date from a)`time;
+    / Step 6: output shape same as your other strats
+    $[.ta.INTER;a;`rsi5`rsi14`sma50 _a]
+  }
