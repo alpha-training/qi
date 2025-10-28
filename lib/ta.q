@@ -196,14 +196,14 @@ TRANGE:{[x]
 
 / ATR (Average True Range)
 ATR:{[x;n]
-  calcATR:{[x;n] tr:exec trueRange from .ta.TRANGE[x];start:avg tr[1+til n];
+  calcATR:{[x;n] tr:.ta.TRANGE[x]`trueRange;start:avg tr[1+til n];
   atr:(n#0n),start,{(y+x*(z-1))%z}\[start;(n+1)_tr;n]};
   update atr:calcATR[x;n] by sym from x
   }
 
 / NATR (Normalized Average True Range)
 NATR:{[x;n]
-  calcNATR:{[x;n] tr:exec trueRange from .ta.TRANGE[x];start:avg tr[1+til n];
+  calcNATR:{[x;n] tr:.ta.TRANGE[x]`trueRange;start:avg tr[1+til n];
   atr:(n#0n),start,{(y+x*(z-1))%z}\[start;(n+1)_tr;n];
   natr:100*atr%x`close};
   update natr:calcNATR[x;n] by sym from x

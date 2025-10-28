@@ -62,18 +62,22 @@ orbUniv:{[x;tradeDate]
     recent:select from x where date within (.Q.pv[(.Q.pv?tradeDate)-14];tradeDate);
     / calculate daily stats
     dailyStats:select
+        open:first open,high:max high,low:min low,close:last close,
         dailyDolVol:sum volume*close,
         dailyTxns:sum transactions,
         barsActive:sum volume>0
         by date,sym from recent;
+    dailyStats:select from dailyStats where date<>tradeDate;
+    dailyStats:.ta.TRANGE[dailyStats];
     / calculate liquidity
     liqStats:select
         addv:avg dailyDolVol,
         avgTxns:avg dailyTxns,
-        tradeCont:avg barsActive%count distinct date 
+        tradeCont:avg barsActive%count distinct date,
+        atr:avg trueRange
         by sym from dailyStats;
     / select 1000 stocks with the highest liquidity
-    liqUniv:select from liqStats where addv>5e6,avgTxns>100,tradeCont>0.8;
+    liqUniv:select from liqStats where addv>5e6,avgTxns>100,tradeCont>0.8,atr>0.5;
     liqUniv:-1000#(`addv xasc liqUniv);
     / select the universe of stocks that could be "in play"
     inPlayUniv:select from recent where sym in (key liqUniv)`sym;
