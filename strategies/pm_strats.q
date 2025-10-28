@@ -57,6 +57,37 @@ wirMer:{[x]
 / Based on https://www.quantconnect.com/research/18444/opening-range-breakout-for-stocks-in-play/p1
 / TK: Function for selecting universe from a range of data
 
+orbUniv:{[x;tradeDate]
+    / select from current date and past 14 days
+    recent:select from x where date within (.Q.pv[(.Q.pv?tradeDate)-14];tradeDate);
+    / calculate daily stats
+    dailyStats:select
+        dailyDolVol:sum volume*close,
+        dailyTxns:sum transactions,
+        barsActive:sum volume>0
+        by date,sym from recent;
+    / calculate liquidity
+    liqStats:select
+        addv:avg dailyDolVol,
+        avgTxns:avg dailyTxns,
+        tradeCont:avg barsActive%count distinct date 
+        by sym from dailyStats;
+    / select 1000 stocks with the highest liquidity
+    liqUniv:select from liqStats where addv>5e6,avgTxns>100,tradeCont>0.8;
+    liqUniv:-1000#(`addv xasc liqUniv);
+    / select the universe of stocks that could be "in play"
+    inPlayUniv:select from recent where sym in (key liqUniv)`sym;
+    / quantify most "In Play" stocks with ratio: (Volume during OR of current day)/(Average volume during OR of past 14 days)
+    inPlay:select avgVol:avg(10#volume) by date,sym from inPlayUniv;
+    inPlay:select 
+        currAV:avgVol where date=max date,
+        histAV:avg(avgVol where date<>max date) 
+        by sym from inPlay;
+    inPlay:update ipRatio:currAV%histAV from inPlay;
+    / select only the 40 most "in play" stocks - assume half will be bearish and will get filtered out
+    inPlay:-40#(`ipRatio xasc inPlay);
+    select from recent where date=tradeDate,sym in (key inPlay)`sym}
+
 orb:{[x]
     enterLogic:{[x]
         openRange:(CFG`ORB.ORMINS)#x;
