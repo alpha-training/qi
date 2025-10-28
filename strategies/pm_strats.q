@@ -55,6 +55,7 @@ wirMer:{[x]
 
 // ORB (Opening Range Breakout)
 / Based on https://www.quantconnect.com/research/18444/opening-range-breakout-for-stocks-in-play/p1
+/ TK: Function for selecting universe from a range of data
 
 orb:{[x]
     enterLogic:{[x]
