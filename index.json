@@ -1,0 +1,43 @@
+{
+  "version": "1.0",
+  "maintainer": "alphakdb.com",
+  "description": "Registry index for qi modules.",
+
+  "modules": {
+    "ty": {
+      "repo": "https://github.com/alpha-training/qi-ty",
+      "ver": "0.1.0",
+      "url": "https://raw.githubusercontent.com/alpha-training/qi-ty/v0.1.0/ty.q",
+      "md5": "0xf108fa1f0b0a759dfa595dbe9f2b3c04",
+      "summary": "Type conversion helpers: str, sym, int, float."
+    },
+    "ta": {
+      "repo": "https://github.com/alpha-training/qi-ta",
+      "ver": "0.1.0",
+      "url": "https://raw.githubusercontent.com/alpha-training/qi-ta/v0.1.0/ta.q",
+      "md5": "0xeb318559f76a85e2618179e3db435fe1",
+      "summary": "Technical analysis utilities for time series, a q port of TA-Lib."
+    },
+    "ipc": {
+      "repo": "https://github.com/alpha-training/qi-ipc",
+      "ver": "0.1.0",
+      "url": "https://raw.githubusercontent.com/alpha-training/qi-ipc/v0.1.0/ipc.q",
+      "md5": "0xa4baed9abe67d89d4813b971811beff1",
+      "summary": "Interprocess communication layer for q processes (single- and multi-host)."
+    },
+    "event": {
+      "repo": "https://github.com/alpha-training/qi-event",
+      "ver": "0.1.0",
+      "url": "https://raw.githubusercontent.com/alpha-training/qi-event/v0.1.0/event.q",
+      "md5": "0x793b7a3ccf5300f1510f379e94aae737",
+      "summary": "Event handling utilities."
+    },
+    "cron": {
+      "repo": "https://github.com/alpha-training/qi-cron",
+      "ver": "0.1.0",
+      "url": "https://raw.githubusercontent.com/alpha-training/qi-cron/v0.1.0/cron.q",
+      "md5": "0x9191d8c501f3f6951be28d2c6a090c5c",
+      "summary": "Lightweight cron-style scheduler for recurring q tasks."
+    }
+  }
+}
