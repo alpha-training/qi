@@ -1,5 +1,7 @@
 .vscode
 temp.*
+old_qi.q
 .env
 config/promote.txt
 example
+vendor

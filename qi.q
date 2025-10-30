@@ -1,17 +1,74 @@
+/ qi - q/kdb+ helper functions
+
 \d .qi
 
-REPO:"https://raw.githubusercontent.com/alpha-training/qi/main/"
+REPO:"https://raw.githubusercontent.com/alpha-training/"
+QI_REPO:REPO,"qi/main/"
 REPO_LIBS:`cron`event`ipc`ta
-tostr:{$[0=t:type x;.z.s each x;10=abs t;x;string x]}
-tosym:{$[0=t:type x;.z.s each x;11=abs t;x;`$tostr x]}
-path:{$[0>type x;hsym tosym x;` sv @[raze tosym x;0;hsym]]}
-spath:1_string path@
-envpath:{[env;default;x]path($[count a:getenv env;a;default];$[any x~/:(::;`);();x])}
-qilib:{envpath[`QILIB;`:lib;dotq x]}
-qiconfig:envpath[`QICONFIG;`:config]
+
+tostr:{$[0=count x;"";0=t:type x;.z.s each x;t in -10 10h;x;string x]}
+tosym:{$[0=count x;`$();0=t:type x;.z.s each x;t in -11 11h;x;`$tostr x]}
+path:{$[0>type x;hsym tosym x;` sv @[raze tosym x;0;hsym]]}     /  returns `:path/to/file
+spath:1_string path@    / returns "path/to/file"
 exists:not()~key@
+env:{[v;default;f] sv[`;`.env,v]set $[count r:getenv v;f r;default];}
+dotq:{$["."in s:tostr x;s;x like"*.q";s;s,".q"]}
+.log.info:{[x] $[type x;-1;-1" "sv]x}
+.qi.system:{.log.info"system ",x;system x}
+fetch:{[url;p] .log.info ("fetch";url;1#">";spath p);path[p]0:.qi.system"curl -fsSL ",url}
+readj:{.j.k raze read0 x}
+loadf:{[p] .qi.system"l ",spath p;}
+loadcfg:{[module;dir]
+  f:$[(def:`default.csv)in f:key p:` sv dir,`config;distinct def,f;f];
+  if[not count f@:where f like"*csv";:()];
+  get".",tostr[module],".cfg,:1#.q";  / TODO - could this be nicer?
+  {[ns;p;f]
+    r:exec name!upper[typ]$default from("SC*";enlist",")0:` sv p,f;
+    @[ns;`cfg;,;r]}[` sv `,module;p]each f;
+  if[exists pp:` sv p,`pp.q;loadf pp];  / if post-process file (pp.q) exists, load it
+ }
+
+env[`QI_INDEX_URL;QI_REPO,"index.json";::]
+env[`QI_HOME;hsym`$getenv[`HOME],"/.qi";path]
+env[`QI_VENDOR;`:vendor/qi;path]
+env[`QI_LOCK;`:qi.lock;path]
+env[`QI_CONFIG;`:qi.json;path]
+env[`QI_OFFLINE;0b;"1"=first@]
+
+envpath:{path @[x;0;.env]}
+
+include:use:{[x]
+  module:first` vs sx:tosym x;
+  f:dotq sx;
+  if[exists pv:envpath(`QI_VENDOR;f);
+    :loadf pv];
+  if[exists pl:.env.QI_LOCK;
+    dbg2];
+  if[exists pc:.env.QI_CONFIG;
+    dbg3];
+  if[not exists pi:path(.env.QI_HOME;`cache;`index.json);
+    fetch[.env.QI_INDEX_URL;pi]];
+  m:readj[pi][`modules]module;
+  if[not exists mp:envpath(`QI_HOME;`pkgs;module;m`ver;f);
+    fetch[m`url;mp]];
+  loadcfg[module;first` vs mp];
+  loadf mp;
+  }
+
+use`ipc
+use`ta
+
+\
+
+/p.home:{envpath[`QI_HOME;getenv`HOME;dotq x]}
+/p.index:{envpath[`QI_INDEX;x;y]}[;`index.json]
+
+INDEX:
+/ envpath:{[env;default;x]path($[count a:getenv env;a;default];$[any x~/:(::;`);();x])}
+\
+
 INCLUDED:0#`
-dotq:{$[x like"*.q";x;-11=type x;` sv x,`q;x,".q"]}
+
 fetch:{[dir;p;x] system"mkdir -p ",spath first ` vs p;system"wget -O ",spath[p]," ",REPO,dir,"/",tostr $[dir~"lib";dotq x;x]}
 fetchcfg:fetch"config"
 fetchlib:fetch"lib"
