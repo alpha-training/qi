@@ -2,9 +2,10 @@
 
 \d .qi
 
-REPO:"https://raw.githubusercontent.com/alpha-training/"
-QI_REPO:REPO,"qi/main/"
-REPO_LIBS:`cron`event`ipc`ta
+OWNER:"alpha-training"
+RAW:"https://raw.githubusercontent.com/",OWNER,"/"
+API:"https://api.github.com/repos/",OWNER,"/"
+getAPI:{[repo;branch] API,repo,"/git/refs/heads/",branch}
 
 tostr:{$[0=count x;"";0=t:type x;.z.s each x;t in -10 10h;x;string x]}
 tosym:{$[0=count x;`$();0=t:type x;.z.s each x;t in -11 11h;x;`$tostr x]}
@@ -12,10 +13,12 @@ path:{$[0>type x;hsym tosym x;` sv @[raze tosym x;0;hsym]]}     /  returns `:pat
 spath:1_string path@    / returns "path/to/file"
 exists:not()~key@
 env:{[v;default;f] sv[`;`.env,v]set $[count r:getenv v;f r;default];}
-dotq:{$["."in s:tostr x;s;x like"*.q";s;s,".q"]}
+dotq:{$[x like"*.*";x;type[x]in -11 11h;` sv x,`q;x,".q"]}
 .log.info:{[x] $[type x;-1;-1" "sv]x}
 .qi.system:{.log.info"system ",x;system x}
-fetch:{[url;p] .log.info ("fetch";url;1#">";spath p);path[p]0:.qi.system"curl -fsSL ",url}
+curl:.qi.system"curl -fsSL ",
+jcurl:.j.k raze curl@
+fetch:{[url;p] .log.info ("fetch";url;1#">";spath p);path[p]0:curl url}
 readj:{.j.k raze read0 x}
 loadf:{[p] .qi.system"l ",spath p;}
 loadcfg:{[module;dir]
@@ -28,7 +31,7 @@ loadcfg:{[module;dir]
   if[exists pp:` sv p,`pp.q;loadf pp];  / if post-process file (pp.q) exists, load it
  }
 
-env[`QI_INDEX_URL;QI_REPO,"index.json";::]
+env[`QI_INDEX_URL;RAW,"qi/main/index.json";::]
 env[`QI_HOME;hsym`$getenv[`HOME],"/.qi";path]
 env[`QI_VENDOR;`:vendor/qi;path]
 env[`QI_LOCK;`:qi.lock;path]
@@ -49,14 +52,27 @@ include:use:{[x]
   if[not exists pi:path(.env.QI_HOME;`cache;`index.json);
     fetch[.env.QI_INDEX_URL;pi]];
   m:readj[pi][`modules]module;
-  if[not exists mp:envpath(`QI_HOME;`pkgs;module;m`ver;f);
-    fetch[m`url;mp]];
+  repo:last"/"vs m`repo;
+  if[m`floating;
+    sha:jcurl[getAPI[repo;m`ref]][`object]`sha;
+    dir:envpath(`QI_HOME;`pkgs;module;`refs;m`ref);
+    current:0b;mp:path(dir;`store;sha;f);
+    if[exists cf:path dir,`current;
+      if[current:sha~raze read0 cf]];
+    if[not current;
+      tree_sha:jcurl[API,repo,"/git/commits/",sha][`tree]`sha;
+      treeInfo:`typ xcol`type`path#/:jcurl[API,repo,"/git/trees/",tree_sha,"?recursive=1"]`tree;
+      {[api;dir;sha;fp]
+        url:api,"/",sha,"/",fp;
+        path[(dir;`store;sha;fp)]0:curl url}[RAW,repo;dir;sha]each exec path from treeInfo where typ like"blob";
+      path[dir,`lastFetch]0:enlist string .z.p;
+      cf 0:enlist sha]];
+  if[not m`floating;
+
+    dbg_no_float];
   loadcfg[module;first` vs mp];
   loadf mp;
   }
-
-use`ipc
-use`ta
 
 \
 
