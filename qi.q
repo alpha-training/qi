@@ -53,6 +53,7 @@ include:use:{[x]
     fetch[.env.QI_INDEX_URL;pi]];
   m:readj[pi][`modules]module;
   repo:last"/"vs m`repo;
+  dbg;
   if[m`floating;
     sha:jcurl[getAPI[repo;m`ref]][`object]`sha;
     dir:envpath(`QI_HOME;`pkgs;module;`refs;m`ref);
