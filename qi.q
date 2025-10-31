@@ -16,11 +16,11 @@ env:{[v;default;f] sv[`;`.env,v]set $[count r:getenv v;f r;default];}
 dotq:{$[x like"*.*";x;type[x]in -11 11h;` sv x,`q;x,".q"]}
 .log.info:{[x] $[type x;-1;-1" "sv]x}
 .qi.system:{.log.info"system ",x;system x}
-curl:.qi.system"curl -fsSL ",
+curl:system"curl -fsSL ",
 jcurl:.j.k raze curl@
-fetch:{[url;p] .log.info ("fetch";url;1#">";spath p);path[p]0:curl url}
+fetch:{[url;p] .log.info"fetch ",url;path[p]0:curl url}
 readj:{.j.k raze read0 x}
-loadf:{[p] .qi.system"l ",spath p;}
+loadf:{[p] system"l ",spath p;}
 loadcfg:{[module;dir]
   f:$[(def:`default.csv)in f:key p:` sv dir,`config;distinct def,f;f];
   if[not count f@:where f like"*csv";:()];
@@ -64,7 +64,7 @@ include:use:{[x]
       treeInfo:`typ xcol`type`path#/:jcurl[API,repo,"/git/trees/",tree_sha,"?recursive=1"]`tree;
       {[api;dir;sha;fp]
         url:api,"/",sha,"/",fp;
-        path[(dir;`store;sha;fp)]0:curl url}[RAW,repo;dir;sha]each exec path from treeInfo where typ like"blob";
+        fetch[url;(dir;`store;sha;fp)]}[RAW,repo;dir;sha]each exec path from treeInfo where typ like"blob";
       path[dir,`lastFetch]0:enlist string .z.p;
       cf 0:enlist sha]];
   if[not m`floating;
