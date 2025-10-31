@@ -9,7 +9,7 @@
     },
     "ta": {
       "repo": "qi-ta",
-      "ref": "v0.1.0",
+      "ref": "v0.1.3",
       "summary": "Technical analysis utilities for time series, a q port of TA-Lib."
     },
     "ipc": {

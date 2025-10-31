@@ -54,25 +54,32 @@ include:use:{[x]
   m:readj[pi][`modules]module;
   repo:$["/"in m`repo;m`repo;DEFAULT_OWNER,"/",m`repo];
 
-  isTag:m[`ref]like"v[0-9]*";
-  sha:jcurl[getAPI[isTag;repo;m`ref]][`object]`sha;
-
-
-    dbg;
+  isTag:refresh:m[`ref]like"v[0-9]*";
+  obj:jcurl[getAPI[isTag;repo;m`ref]]`object;
+  sha:obj`sha;
+  if[isTag;
+    if["tag"~obj`type;
+      sha:jcurl[API,repo,"/git/tags/",obj`sha][`object]`sha];
+      dir:envpath(`QI_HOME;`pkgs;module;m`ref)];
   if[not isTag;
-    sha:jcurl[getAPI[isTag;repo;m`ref]][`object]`sha;
     dir:envpath(`QI_HOME;`pkgs;module;`refs;m`ref);
-    current:0b;mp:path(dir;`store;sha;f);
+    current:0b;
     if[exists cf:path dir,`current;
-      if[current:sha~raze read0 cf]];
-    if[not current;
-      tree_sha:jcurl[API,repo,"/git/commits/",sha][`tree]`sha;
-      treeInfo:`typ xcol`type`path#/:jcurl[API,repo,"/git/trees/",tree_sha,"?recursive=1"]`tree;
-      {[api;dir;sha;fp]
-        url:api,"/",sha,"/",fp;
-        fetch[url;(dir;`store;sha;fp)]}[RAW,repo;dir;sha]each exec path from treeInfo where typ like"blob";
+      if[refresh:not sha~raze read0 cf]]];
+  dir2:dir,$[isTag;();(`store;sha)];
+  mp:path dir2,f;
+  if[refresh;
+    /dbgr;
+    tree_sha:jcurl[API,repo,"/git/commits/",sha][`tree]`sha;
+    treeInfo:`typ xcol`type`path#/:jcurl[API,repo,"/git/trees/",tree_sha,"?recursive=1"]`tree;
+    {[isTag;api;dir2;sha;fp]
+      url:api,"/",sha,"/",fp;
+      if[not isTag;dbgi];
+      fetch[url;dir2,fp]}[isTag;RAW,repo;dir2;sha]each exec path from treeInfo where typ like"blob";
+    if[not isTag;
       path[dir,`lastFetch]0:enlist string .z.p;
       cf 0:enlist sha]];
+
   loadcfg[module;first` vs mp];
   loadf mp;
   }
