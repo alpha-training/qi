@@ -3,9 +3,9 @@
 \d .qi
 
 DEFAULT_OWNER:"alpha-training"
-RAW:"https://raw.githubusercontent.com/",DEFAULT_OWNER,"/"
-API:"https://api.github.com/repos/",DEFAULT_OWNER,"/"
-getAPI:{[repo;branch] API,repo,"/git/refs/heads/",branch}
+RAW:"https://raw.githubusercontent.com/"
+API:"https://api.github.com/repos/"
+getAPI:{[isTag;repo;ref] API,repo,"/git/refs/",$[isTag;"tags";"heads"],"/",ref}
 
 tostr:{$[0=count x;"";0=t:type x;.z.s each x;t in -10 10h;x;string x]}
 tosym:{$[0=count x;`$();0=t:type x;.z.s each x;t in -11 11h;x;`$tostr x]}
@@ -31,7 +31,7 @@ loadcfg:{[module;dir]
   if[exists pp:` sv p,`pp.q;loadf pp];  / if post-process file (pp.q) exists, load it
  }
 
-env[`QI_INDEX_URL;RAW,"qi/main/index.json";::]
+env[`QI_INDEX_URL;RAW,DEFAULT_OWNER,"/qi/main/index.json";::]
 env[`QI_HOME;hsym`$getenv[`HOME],"/.qi";path]
 env[`QI_VENDOR;`:vendor/qi;path]
 env[`QI_LOCK;`:qi.lock;path]
@@ -52,10 +52,15 @@ include:use:{[x]
   if[not exists pi:path(.env.QI_HOME;`cache;`index.json);
     fetch[.env.QI_INDEX_URL;pi]];
   m:readj[pi][`modules]module;
-  repo:last"/"vs m`repo;
-  dbg;
-  if[m`floating;
-    sha:jcurl[getAPI[repo;m`ref]][`object]`sha;
+  repo:$["/"in m`repo;m`repo;DEFAULT_OWNER,"/",m`repo];
+
+  isTag:m[`ref]like"v[0-9]*";
+  sha:jcurl[getAPI[isTag;repo;m`ref]][`object]`sha;
+
+
+    dbg;
+  if[not isTag;
+    sha:jcurl[getAPI[isTag;repo;m`ref]][`object]`sha;
     dir:envpath(`QI_HOME;`pkgs;module;`refs;m`ref);
     current:0b;mp:path(dir;`store;sha;f);
     if[exists cf:path dir,`current;
@@ -68,12 +73,11 @@ include:use:{[x]
         fetch[url;(dir;`store;sha;fp)]}[RAW,repo;dir;sha]each exec path from treeInfo where typ like"blob";
       path[dir,`lastFetch]0:enlist string .z.p;
       cf 0:enlist sha]];
-  if[not m`floating;
-
-    dbg_no_float];
   loadcfg[module;first` vs mp];
   loadf mp;
   }
+
+use`ta
 
 \
 
