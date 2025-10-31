@@ -2,10 +2,10 @@
 
 \d .qi
 
-/ OWNER:"alpha-training"
-RAW:"https://raw.githubusercontent.com/"
-API:"https://api.github.com/repos/"
-getAPI:{[owner;repo;branch] API,repo,"/git/refs/heads/",branch}
+DEFAULT_OWNER:"alpha-training"
+RAW:"https://raw.githubusercontent.com/",DEFAULT_OWNER,"/"
+API:"https://api.github.com/repos/",DEFAULT_OWNER,"/"
+getAPI:{[repo;branch] API,repo,"/git/refs/heads/",branch}
 
 tostr:{$[0=count x;"";0=t:type x;.z.s each x;t in -10 10h;x;string x]}
 tosym:{$[0=count x;`$();0=t:type x;.z.s each x;t in -11 11h;x;`$tostr x]}
@@ -54,7 +54,6 @@ include:use:{[x]
   m:readj[pi][`modules]module;
   repo:last"/"vs m`repo;
   if[m`floating;
-    dbg;
     sha:jcurl[getAPI[repo;m`ref]][`object]`sha;
     dir:envpath(`QI_HOME;`pkgs;module;`refs;m`ref);
     current:0b;mp:path(dir;`store;sha;f);

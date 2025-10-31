@@ -1,7 +1,6 @@
 {
   "version": "1.0",
   "maintainer": "alphakdb.com",
-  "default_owner" : "alpha-training",
   "modules": {
     "ty": {
       "repo": "qi-ty",
