@@ -6,3 +6,4 @@ config/promote.txt
 example
 vendor
 .qi
+.env

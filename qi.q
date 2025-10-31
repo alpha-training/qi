@@ -5,6 +5,7 @@
 DEFAULT_OWNER:"alpha-training"
 RAW:"https://raw.githubusercontent.com/"
 API:"https://api.github.com/repos/"
+TOKEN:getenv`GITHUB_TOKEN
 getAPI:{[isTag;repo;ref] API,repo,"/git/refs/",$[isTag;"tags";"heads"],"/",ref}
 
 tostr:{$[0=count x;"";0=t:type x;.z.s each x;t in -10 10h;x;string x]}
@@ -16,7 +17,7 @@ env:{[v;default;f] sv[`;`.env,v]set $[count r:getenv v;f r;default];}
 dotq:{$[x like"*.*";x;type[x]in -11 11h;` sv x,`q;x,".q"]}
 .log.info:{[x] $[type x;-1;-1" "sv]x}
 .qi.system:{.log.info"system ",x;system x}
-curl:system"curl -fsSL ",
+curl:system("curl -fsSL ",$[count TOKEN;"-H \"Authorization: Bearer ",TOKEN,"\" ";""]),
 jcurl:.j.k raze curl@
 fetch:{[url;p] .log.info"fetch ",url;path[p]0:curl url}
 readj:{.j.k raze read0 x}
@@ -54,7 +55,7 @@ include:use:{[x]
   m:readj[pi][`modules]module;
   repo:$["/"in m`repo;m`repo;DEFAULT_OWNER,"/",m`repo];
 
-  isTag:refresh:m[`ref]like"v[0-9]*";
+  isTag:m[`ref]like"v[0-9]*";refresh:1b;
   obj:jcurl[getAPI[isTag;repo;m`ref]]`object;
   sha:obj`sha;
   if[isTag;
@@ -63,19 +64,16 @@ include:use:{[x]
       dir:envpath(`QI_HOME;`pkgs;module;m`ref)];
   if[not isTag;
     dir:envpath(`QI_HOME;`pkgs;module;`refs;m`ref);
-    current:0b;
     if[exists cf:path dir,`current;
-      if[refresh:not sha~raze read0 cf]]];
-  dir2:dir,$[isTag;();(`store;sha)];
+      refresh:not sha~raze read0 cf]];
+  dir2:path dir,$[isTag;();(`store;sha)];
   mp:path dir2,f;
   if[refresh;
-    /dbgr;
     tree_sha:jcurl[API,repo,"/git/commits/",sha][`tree]`sha;
     treeInfo:`typ xcol`type`path#/:jcurl[API,repo,"/git/trees/",tree_sha,"?recursive=1"]`tree;
-    {[isTag;api;dir2;sha;fp]
+    {[api;dir2;sha;fp]
       url:api,"/",sha,"/",fp;
-      if[not isTag;dbgi];
-      fetch[url;dir2,fp]}[isTag;RAW,repo;dir2;sha]each exec path from treeInfo where typ like"blob";
+      if[not exists p:path(dir2;fp);fetch[url;(dir2;fp)]]}[RAW,repo;dir2;sha]each exec path from treeInfo where typ like"blob";
     if[not isTag;
       path[dir,`lastFetch]0:enlist string .z.p;
       cf 0:enlist sha]];
@@ -83,8 +81,6 @@ include:use:{[x]
   loadcfg[module;first` vs mp];
   loadf mp;
   }
-
-use`ta
 
 \
 

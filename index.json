@@ -18,7 +18,7 @@
       "summary": "Interprocess communication layer for q processes (single- and multi-host)."
     },
     "event": {
-      "repo": "alpha-training/qi-event",
+      "repo": "qi-event",
       "ref": "main",
       "summary": "Event handling utilities."
     },
