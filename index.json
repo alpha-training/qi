@@ -1,15 +1,15 @@
 {
   "version": "1.0",
   "maintainer": "alphakdb.com",
-  "description": "Registry index for qi modules (floating dev channel, tracking main branches).",
+  "description": "Registry index for qi modules.",
 
   "modules": {
     "ty": {
       "repo": "https://github.com/alpha-training/qi-ty",
-      "ver": "0.1-dev",
-      "ref": "main",
-      "url": "https://raw.githubusercontent.com/alpha-training/qi-ty/main/ty.q",
-      "floating": true,
+      "ver": "0.1.1",
+      "ref": "v0.1.1",
+      "url": "https://raw.githubusercontent.com/alpha-training/qi-ty/v0.1.1/ty.q",
+      "floating": false,
       "summary": "Type conversion helpers: str, sym, int, float."
     },
     "ta": {
